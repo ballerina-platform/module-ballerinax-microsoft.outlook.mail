@@ -1,0 +1,11 @@
+[package]
+org= "balleirnax"
+name= "microsoft.outlook.mail"
+version= "0.1.1-SNAPSHOT"
+authors = ["Ballerina"]
+keywords = ["Microsoft", "Outlook", "Mail"]
+repository = "https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail"
+license = ["Apache-2.0"]
+
+[build-options]
+observability-included=true
