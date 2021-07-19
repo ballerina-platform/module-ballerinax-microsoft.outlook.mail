@@ -375,7 +375,7 @@ public client class Client {
         string requestParams = MAIL_FOLDER + parentFolderId + SLASH_CHILD_FOLDERS;
         http:Request request = new;
         json searchRequest = mailSearchFolder.toJson();
-        searchRequest = check searchRequest.mergeJson({"@odata.type": "microsoft.graph.mailSearchFolder"});
+        _ = check searchRequest.mergeJson({"@odata.type": "microsoft.graph.mailSearchFolder"});
         request.setJsonPayload(searchRequest);
         return check self.httpClient->post(requestParams, request, targetType = MailSearchFolder);
     }
@@ -452,4 +452,3 @@ public type Configuration record {
     http:BearerTokenConfig|http:OAuth2RefreshTokenGrantConfig clientConfig;
     http:ClientSecureSocket secureSocketConfig?;
 };
-
