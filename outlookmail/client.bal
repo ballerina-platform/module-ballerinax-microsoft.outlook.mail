@@ -50,7 +50,7 @@ public client class Client {
         requestParams = folderId is string ? (MAIL_FOLDER + folderId + SLASH_MESSAGES + requestParams) : (SLASH_MESSAGES + 
         requestParams);
         json response = check self.httpClient->get(requestParams, targetType = json);
-        MessageStream objectInstance = check new (response, self.config);
+        MessageStream objectInstance = check new (response, self.config, optionalUriParameters);
         stream<Message, error?> finalStream = new (objectInstance);
         return finalStream;
     }

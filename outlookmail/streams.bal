@@ -21,8 +21,9 @@ class MessageStream {
     int index = 0;
     string nextLink = EMPTY_STRING;
     Configuration config;
+    string? queryParams;
 
-    public isolated function init(json payload, Configuration config) returns @tainted error? {
+    public isolated function init(json payload, Configuration config, string? queryParams = ()) returns @tainted error? {
         json[] messages = let var value = payload.value
             in value is json ? <json[]>value : [];
         foreach json message in messages {
@@ -31,6 +32,7 @@ class MessageStream {
         }
         self.nextLink = getNextLink(payload);
         self.config = config;
+         self.queryParams = queryParams;
     }
 
     public isolated function next() returns @tainted record {|Message value;|}|error? {
@@ -38,7 +40,7 @@ class MessageStream {
             record {|Message value;|} singleRecord = {value: self.messageEntries[self.index]};
             self.index += 1;
             return singleRecord;
-        } else if (self.nextLink != EMPTY_STRING) {
+        } else if (self.nextLink != EMPTY_STRING && !self.queryParams.toString().includes("$top")) {
             self.index = 0;
             self.messageEntries = check self.fetchMessages(self.nextLink);
             if (self.messageEntries.length() == 0) {

@@ -1,5 +1,5 @@
 [package]
-org= "balleirnax"
+org= "ballerinax"
 name= "microsoft.outlook.mail"
 version= "0.1.1-SNAPSHOT"
 authors = ["Ballerina"]
