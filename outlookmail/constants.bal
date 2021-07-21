@@ -15,39 +15,40 @@
 // under the License.
 
 //Strings
-const string & readonly EMPTY_STRING = "";
-const string & readonly COMMA = ",";
-const string & readonly FILE = "file";
-const string & readonly ZERO_STRING = "0";
+const string EMPTY_STRING = "";
+const string COMMA = ",";
+const string FILE = "file";
+const string ZERO_STRING = "0";
 
 
 //URLS
-const string & readonly BASE_URL = "https://graph.microsoft.com/v1.0/me";
+const string BASE_URL = "https://graph.microsoft.com/v1.0/me";
+const string Refresh_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 
 //URL Parts
-const string & readonly MAIL_FOLDER = "/mailFolders/";
-const string & readonly SLASH_MESSAGES = "/messages";
-const string & readonly MESSAGES = "/messages/";
-const string & readonly FORWARD_SLASH = "/";
-const string & readonly SEND = "/send";
-const string & readonly COPY = "/copy";
-const string & readonly FORWARD = "/forward";
-const string & readonly SEND_MAIL = "/sendMail";
-const string & readonly SLASH_ATTACHMENTS = "/attachments";
-const string & readonly ATTACHMENTS = "/attachments/";
-const string & readonly SLASH_MAIL_FOLDERS = "/mailFolders";
-const string & readonly SLASH_CHILD_FOLDERS = "/childFolders";
-const string & readonly INCLUDE_HIDDEN_FOLDERS = "/?includeHiddenFolders=";
-const string & readonly UPLOAD_SESSION = "/attachments/createUploadSession";
+const string MAIL_FOLDER = "/mailFolders/";
+const string SLASH_MESSAGES = "/messages";
+const string MESSAGES = "/messages/";
+const string FORWARD_SLASH = "/";
+const string SEND = "/send";
+const string COPY = "/copy";
+const string FORWARD = "/forward";
+const string SEND_MAIL = "/sendMail";
+const string SLASH_ATTACHMENTS = "/attachments";
+const string ATTACHMENTS = "/attachments/";
+const string SLASH_MAIL_FOLDERS = "/mailFolders";
+const string SLASH_CHILD_FOLDERS = "/childFolders";
+const string INCLUDE_HIDDEN_FOLDERS = "/?includeHiddenFolders=";
+const string UPLOAD_SESSION = "/attachments/createUploadSession";
 
 //ERROR MESSAGES
-const string & readonly STATUS_CODE = "status code: ";
-const string & readonly MAX_SIZE_ERROR = "Maximum io:block byte[] size must be smaller than 3MB (3000000 bytes)";
+const string STATUS_CODE = "status code: ";
+const string MAX_SIZE_ERROR = "Maximum io:block byte[] size must be smaller than 3MB (3000000 bytes)";
 
 //Headers
-const string & readonly CONTENT_TYPE = "Content-Type";
-const string & readonly CONTENT_LENGTH = "Content-Length";
-const string & readonly JSON_TYPE = "application/json";
+const string CONTENT_TYPE = "Content-Type";
+const string CONTENT_LENGTH = "Content-Length";
+const string JSON_TYPE = "application/json";
 
 //Json
-const string & readonly DESTINATION_ID = "destinationId";
+const string DESTINATION_ID = "destinationId";

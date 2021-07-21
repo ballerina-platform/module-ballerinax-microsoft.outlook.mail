@@ -17,10 +17,10 @@
 import ballerina/log;
 import ballerinax/microsoft.outlook.mail;
 
-configurable string & readonly refreshUrl = ?;
-configurable string & readonly refreshToken = ?;
-configurable string & readonly clientId = ?;
-configurable string & readonly clientSecret = ?;
+configurable string refreshUrl = ?;
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
 
 mail:Configuration configuration = {
     clientConfig: {
@@ -33,17 +33,14 @@ mail:Configuration configuration = {
 
 mail:Client outlookClient = check new(configuration);
 
-public function main() {
+public function main() returns error? {
   log:printInfo("outlookClient->listMessages()");
-    var output = outlookClient->listMessages(folderId = "drafts", optionalUriParameters="?$select:\"sender,subject\"");
-    if (output is stream<mail:Message, error?>) {
-        int index = 0;
-        error? e = output.forEach(function (mail:Message queryResult) {
-            index = index + 1; 
-            log:printInfo(queryResult?.id.toString());
-        });
-        log:printInfo("Total count of records : " +  index.toString());        
-    } else {
-        log:printError(output.toString());
-    }  
+    stream<mail:Message, error?> output = check outlookClient->listMessages(folderId = "drafts", 
+        optionalUriParameters="?$select:\"sender,subject\"");
+    int index = 0;
+    error? e = output.forEach(function (mail:Message queryResult) {
+        index = index + 1; 
+        log:printInfo(queryResult?.id.toString());
+    });
+    log:printInfo("Total count of records : " +  index.toString());         
 }

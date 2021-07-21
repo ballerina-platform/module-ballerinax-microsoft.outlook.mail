@@ -3,10 +3,10 @@ import ballerina/os;
 import ballerina/test;
 import ballerina/io;
 
-configurable string & readonly refreshUrl = os:getEnv("REFRESH_URL");
-configurable string & readonly refreshToken = os:getEnv("REFRESH_TOKEN");
-configurable string & readonly clientId = os:getEnv("CLIENT_ID");
-configurable string & readonly clientSecret = os:getEnv("CLIENT_SECRET");
+configurable string refreshUrl = os:getEnv("REFRESH_URL");
+configurable string refreshToken = os:getEnv("REFRESH_TOKEN");
+configurable string clientId = os:getEnv("CLIENT_ID");
+configurable string clientSecret = os:getEnv("CLIENT_SECRET");
 
 Configuration configuration = {
     clientConfig: {
@@ -31,7 +31,7 @@ string attachmentId = "";
 }
 function testListMessages() {
     log:printInfo("oneDriveClient->listMessages()");
-    var output = oneDriveClient->listMessages(folderId = "drafts", optionalUriParameters = "?$select:\"sender,subject\"");
+    var output = oneDriveClient->listMessages(folderId = "drafts", optionalUriParameters = "?$select:\"sender,subject\"&top:2");
     if (output is stream<Message, error?>) {
         int index = 0;
         error? e = output.forEach(function(Message queryResult) {
@@ -50,11 +50,11 @@ function testListMessages() {
 function tesCreateDraft() {
     log:printInfo("oneDriveClient->tesCreateDraft()");
     DraftMessage draft = {
-        subject: "Did you see last night's game?",
+        subject: "Test Subject",
         importance: "Low",
         body: {
             "contentType": "HTML",
-            "content": "They were <b>awesome</b>!"
+            "content": "Test content <b>ballerina</b>!"
         },
         toRecipients: [
             {
@@ -95,7 +95,7 @@ function testGetMessage() {
 function testUpdateMessage() {
     log:printInfo("oneDriveClient->updateMessage()");
     MessageUpdateContent message = {
-        subject: "Did Sandu see last night's game?",
+        subject: "Test Subject",
         importance: "Low",
         body: {
             "contentType": "HTML",

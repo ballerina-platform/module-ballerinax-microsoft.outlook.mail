@@ -17,10 +17,10 @@
 import ballerina/log;
 import ballerinax/microsoft.outlook.mail;
 
-configurable string & readonly refreshUrl = ?;
-configurable string & readonly refreshToken = ?;
-configurable string & readonly clientId = ?;
-configurable string & readonly clientSecret = ?;
+configurable string refreshUrl = ?;
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
 
 mail:Configuration configuration = {
     clientConfig: {

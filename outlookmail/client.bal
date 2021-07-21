@@ -17,7 +17,7 @@
 import ballerina/http;
 import ballerina/io;
 
-# Ballerina Client for microsoft outlook mail operations
+# Ballerina Client for microsoft outlook mail operations.
 @display {
     label: "Microsoft Outlook.mail Client",
     iconPath: "MSOutlookMailLogo.svg"
@@ -45,7 +45,7 @@ public client class Client {
     @display {label: "List Messages"}
     isolated remote function listMessages(@display {label: "Folder ID"} string? folderId = (), 
                                         @display {label: "Optional Query Parameters"} string? optionalUriParameters = ()) 
-                                        returns @tainted error|stream<Message, error?> {
+                                        returns error|stream<Message, error?> {
         string requestParams = optionalUriParameters is () ? EMPTY_STRING : optionalUriParameters;
         requestParams = folderId is string ? (MAIL_FOLDER + folderId + SLASH_MESSAGES + requestParams) : (SLASH_MESSAGES + 
         requestParams);
@@ -62,8 +62,7 @@ public client class Client {
     # + return - If success returns the newly created draft detail as a message record otherwise the relevant error
     @display {label: "Create Message"}
     isolated remote function createMessage(@display {label: "Draft Message"} DraftMessage message, 
-                                            @display {label: "Folder ID"} string? folderId = ()) returns @tainted 
-                                            Message|error {
+                                            @display {label: "Folder ID"} string? folderId = ()) returns Message|error {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId + SLASH_MESSAGES) : SLASH_MESSAGES;
         http:Request request = new;
         request.setJsonPayload(message.toJson());
@@ -83,16 +82,13 @@ public client class Client {
     isolated remote function getMessage(@display {label: "Message ID"} string messageId, 
                                         @display {label: "Folder ID"} string? folderId = (), 
                                         @display {label: "Optional Query Parameters"} string? optionalUriParameters = 
-                                        (), @display {label: "Body Content Format"} string? bodyContentType = ()) 
-                                        returns @tainted Message|error {
+                                        (), @display {label: "Body Content Format"} string bodyContentType = "html") 
+                                        returns Message|error {
         string optionalPrams = optionalUriParameters is () ? EMPTY_STRING : optionalUriParameters;
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId) : EMPTY_STRING;
         requestParams += MESSAGES + messageId + FORWARD_SLASH + optionalPrams;
-        if (bodyContentType is string) {
-            map<string> headers = {"Prefer": "outlook.body-content-type=" + bodyContentType};
-            return check self.httpClient->get(requestParams, headers, Message);
-        }
-        return check self.httpClient->get(path = requestParams, targetType = Message);
+        map<string> headers = {"Prefer": "outlook.body-content-type=" + bodyContentType};
+        return check self.httpClient->get(requestParams, headers, targetType = Message);
     }
 
     # Updates the properties of a message 
@@ -105,7 +101,7 @@ public client class Client {
     isolated remote function updateMessage(@display {label: "Update Message"} string messageId, 
                                            @display {label: "Message Content"} MessageUpdateContent message, 
                                            @display {label: "Folder ID"} string? folderId = ()) 
-                                           returns @tainted Message|error {
+                                           returns Message|error {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId + MESSAGES) : MESSAGES;
         requestParams += messageId;
         http:Request request = new;
@@ -120,13 +116,11 @@ public client class Client {
     # + return - If success returns null otherwise the relevant error
     @display {label: "Delete Message"}
     isolated remote function deleteMessage(@display {label: "Messages ID"} string messageId, 
-                                           @display {label: "Folder ID"} string? folderId = ()) returns @tainted error? {
+                                           @display {label: "Folder ID"} string? folderId = ()) returns http:Response
+                                           |error {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId + MESSAGES) : MESSAGES;
         requestParams += messageId;
-        http:Response response = check self.httpClient->delete(requestParams);
-        if (response.statusCode != http:STATUS_NO_CONTENT) {
-            return getErrorMessage(response);
-        }
+        return check self.httpClient->delete(requestParams);
     }
 
     # Sends an existing draft message
@@ -134,14 +128,12 @@ public client class Client {
     # + messageId - The ID of the message 
     # + return - If success returns null otherwise the relevant error
     @display {label: "Send Draft Messages"}
-    isolated remote function sendDraftMessage(@display {label: "Message ID"} string messageId) returns @tainted error? {
+    isolated remote function sendDraftMessage(@display {label: "Message ID"} string messageId) returns http:Response
+                                             |error {
         string requestParams = MESSAGES + messageId + SEND;
         http:Request request = new;
         request.setHeader(CONTENT_LENGTH, ZERO_STRING);
-        http:Response response = check self.httpClient->post(requestParams, request);
-        if (response.statusCode != http:STATUS_ACCEPTED) {
-            return getErrorMessage(response);
-        }
+        return check self.httpClient->post(requestParams, request);
     }
 
     # Copies a message to a folder
@@ -153,15 +145,11 @@ public client class Client {
     @display {label: "Copy Message"}
     isolated remote function copyMessage(@display {label: "Message ID"} string messageId, 
                                         @display {label: "Destination Folder ID"} string destinationFolderId, 
-                                        @display {label: "Folder ID"} string? folderId = ()) returns 
-                                        @tainted error? {
+                                        @display {label: "Folder ID"} string? folderId = ()) returns http:Response
+                                        |error {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId + MESSAGES) : MESSAGES;
         requestParams += messageId + COPY;
-        http:Request request = new;
-        http:Response response = check self.httpClient->post(requestParams, {"destinationId": destinationFolderId});
-        if (response.statusCode != http:STATUS_CREATED) {
-            return getErrorMessage(response);
-        }
+        return check self.httpClient->post(requestParams, {"destinationId": destinationFolderId});
     }
 
     # Forwards a message
@@ -176,16 +164,11 @@ public client class Client {
                                             @display {label: "Comment"} string comment, 
                                             @display {label: "Email List"} string[] addressList, 
                                             @display {label: "Folder ID"} string? folderId = ()) 
-                                            returns @tainted error? {
+                                            returns http:Response|error {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId + MESSAGES) : MESSAGES;
         requestParams += messageId + FORWARD;
-        http:Request request = new;
         ForwardParamsList parameterList = getRecipientListAsRecord(comment, addressList);
-        request.setJsonPayload(parameterList.toJson());
-        http:Response response = check self.httpClient->post(requestParams, request);
-        if (response.statusCode != http:STATUS_ACCEPTED) {
-            return getErrorMessage(response);
-        }
+        return check self.httpClient->post(requestParams, parameterList.toJson());
     }
 
     # Sends a message 
@@ -193,16 +176,13 @@ public client class Client {
     # + messageContent - The message content and properties
     # + return - If success returns null otherwise the relevant error
     @display {label: "Send Message"}
-    isolated remote function sendMessage(@display {label: "Message"} MessageContent messageContent) returns 
-                                         @tainted error? {
+    isolated remote function sendMessage(@display {label: "Message"} MessageContent messageContent) returns http:Response
+                                        |error {
         string requestParams = SEND_MAIL;
         http:Request request = new;
         messageContent.message.attachments = addOdataFileType(messageContent);
         request.setJsonPayload(messageContent.toJson());
-        http:Response response = check self.httpClient->post(requestParams, request);
-        if (response.statusCode != http:STATUS_ACCEPTED) {
-            return getErrorMessage(response);
-        }
+        return check self.httpClient->post(requestParams, request);
     }
 
     # Retrieves a list of attachments
@@ -215,7 +195,7 @@ public client class Client {
     isolated remote function listAttachment(@display {label: "Message ID"} string messageId, 
                                             @display {label: "Folder ID"} string? folderId = (), 
                                             @display {label: "Child Folder ID List"} string[]? childFolderIds = ()) 
-                                            returns @tainted stream<FileAttachment, error?>|error {
+                                            returns stream<FileAttachment, error?>|error {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId) : EMPTY_STRING;
         requestParams += childFolderIds is () ? EMPTY_STRING : (addChildFolderIds(childFolderIds));
         requestParams += MESSAGES + messageId + SLASH_ATTACHMENTS;
@@ -239,8 +219,8 @@ public client class Client {
     # + return - If success returns the created mail folder detail otherwise the relevant error
     @display {label: "Create Mail Folder"}
     isolated remote function createMailFolder(@display {label: "Display Name"} string displayName, 
-                                             @display {label: "Is Hidden"} boolean? isHidden = ()) returns @tainted 
-                                             MailFolder|error {
+                                             @display {label: "Is Hidden"} boolean? isHidden = ()) returns MailFolder
+                                             |error {
         string requestParams = SLASH_MAIL_FOLDERS;
         http:Request request = new;
         request.setJsonPayload({displayName: displayName, isHidden: false});
@@ -257,11 +237,10 @@ public client class Client {
     isolated remote function createChildMailFolder(@display {label: "Parent Folder ID"} string parentFolderId, 
                                                     @display {label: "Display Name"} string displayName, 
                                                     @display {label: "Is Hidden"} boolean? isHidden = ()) 
-                                                    returns @tainted MailFolder|error {
+                                                    returns MailFolder|error {
         string requestParams = MAIL_FOLDER + parentFolderId + SLASH_CHILD_FOLDERS;
-        http:Request request = new;
-        request.setJsonPayload({displayName: displayName, isHidden: false});
-        return check self.httpClient->post(requestParams, request, targetType = MailFolder);
+        json payload = {displayName: displayName, isHidden: false};
+        return check self.httpClient->post(requestParams, payload, targetType = MailFolder);
     }
 
     # Retrieves the details of a message folder
@@ -270,8 +249,8 @@ public client class Client {
     # + return - If success returns the requested mail folder details as a mail folder record otherwise the relevant 
     # error 
     @display {label: "Get Mail Folder"}
-    isolated remote function getMailFolder(@display {label: "Mail Folder ID"} string mailFolderId) returns @tainted 
-                                            MailFolder|error {
+    isolated remote function getMailFolder(@display {label: "Mail Folder ID"} string mailFolderId) returns MailFolder
+                                           |error {
         string requestParams = MAIL_FOLDER + mailFolderId;
         return check self.httpClient->get(requestParams, targetType = MailFolder);
     }
@@ -282,13 +261,10 @@ public client class Client {
     # ( Eg: inbox, sentitems etc. https://docs.microsoft.com/en-us/graph/api/resources/mailfolder?view=graph-rest-1.0)
     # + return - If success returns null otherwise the relevant error
     @display {label: "Delete Mail Folder"}
-    isolated remote function deleteMailFolder(@display {label: "Mail Folder ID"} string mailFolderId) returns @tainted 
-                                            error? {
+    isolated remote function deleteMailFolder(@display {label: "Mail Folder ID"} string mailFolderId) returns 
+                                              http:Response|error {
         string requestParams = MAIL_FOLDER + mailFolderId;
-        http:Response response = check self.httpClient->delete(requestParams);
-        if (response.statusCode != http:STATUS_NO_CONTENT) {
-            return getErrorMessage(response);
-        }
+        return check self.httpClient->delete(requestParams);
     }
 
     # Adds an attachment that's smaller than 3MB to a message
@@ -303,7 +279,7 @@ public client class Client {
                                                 @display {label: "File Attachment"} FileAttachment attachment, 
                                                 @display {label: "Folder ID"} string? folderId = (), 
                                                 @display {label: "Child Folder IDs"} string[]? childFolderIds = ()) 
-                                                returns @tainted FileAttachment|error {
+                                                returns FileAttachment|error {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId) : EMPTY_STRING;
         requestParams += childFolderIds is () ? EMPTY_STRING : (addChildFolderIds(childFolderIds));
         requestParams += MESSAGES + messageId + SLASH_ATTACHMENTS;
@@ -319,7 +295,7 @@ public client class Client {
     # + return - If success returns a ballerina stream of mail folder records otherwise the relevant error
     @display {label: "List Mail Folders"}
     isolated remote function listMailFolders(@display {label: "Include Hidden Folders"} boolean? includeHiddenFolders = 
-                                            ()) returns @tainted stream<MailFolder, error?>|error {
+                                            ()) returns stream<MailFolder, error?>|error {
         string requestParams = SLASH_MAIL_FOLDERS;
         requestParams += includeHiddenFolders is () ? EMPTY_STRING : (INCLUDE_HIDDEN_FOLDERS + 
         includeHiddenFolders.toString());
@@ -344,8 +320,7 @@ public client class Client {
     @display {label: "List Child Mail Folders"}
     isolated remote function listChildMailFolders(@display {label: "Parent Folder ID"} string parentFolderId, 
                                                 @display {label: "Include Hidden Folder"} boolean? 
-                                                includeHiddenFolders = ()) returns @tainted 
-                                                stream<MailFolder, error?>|error {
+                                                includeHiddenFolders = ()) returns stream<MailFolder, error?>|error {
         string requestParams = MAIL_FOLDER + parentFolderId + SLASH_CHILD_FOLDERS;
         requestParams += includeHiddenFolders is () ? EMPTY_STRING : (INCLUDE_HIDDEN_FOLDERS + 
         includeHiddenFolders.toString());
@@ -371,7 +346,7 @@ public client class Client {
     @display {label: "Create Mail Search Folder"}
     isolated remote function createMailSearchFolder(@display {label: "Parent Folder ID"} string parentFolderId, 
                                                     @display {label: "Mail Search Folder"} MailSearchFolder 
-                                                    mailSearchFolder) returns @tainted MailSearchFolder|error {
+                                                    mailSearchFolder) returns MailSearchFolder|error {
         string requestParams = MAIL_FOLDER + parentFolderId + SLASH_CHILD_FOLDERS;
         http:Request request = new;
         json searchRequest = mailSearchFolder.toJson();
@@ -393,7 +368,7 @@ public client class Client {
                                                 @display {label: "Attachment Name"} string attachmentName, 
                                                 @display {label: "File Path Or Content"} stream<io:Block, error?>|
                                                 string|byte[] file, @display {label: "File Size In Bytes"} int? fileSize  
-                                                = ()) returns @tainted error? {
+                                                = ()) returns error? {
         byte[] content = [];
         string requestParams = MESSAGES + messageId + UPLOAD_SESSION;
         http:Request request = new;
@@ -431,7 +406,7 @@ public client class Client {
                                                 @display {label: "File Attachment ID"} string attachmentID, 
                                                 @display {label: "Folder ID"} string? folderId = (), 
                                                 @display {label: "Child Folder IDs"} string[]? childFolderIds = ()) 
-                                                returns @tainted error? {
+                                                returns error? {
         string requestParams = folderId is string ? (MAIL_FOLDER + folderId) : EMPTY_STRING;
         requestParams += childFolderIds is () ? EMPTY_STRING : (addChildFolderIds(childFolderIds));
         requestParams += MESSAGES + messageId + ATTACHMENTS + attachmentID;
@@ -440,7 +415,6 @@ public client class Client {
             return getErrorMessage(response);
         }
     }
-
 }
 
 # Represents configuration parameters to create Azure Cosmos DB client.
