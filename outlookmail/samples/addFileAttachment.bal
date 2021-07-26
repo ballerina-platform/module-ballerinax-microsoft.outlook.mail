@@ -38,6 +38,6 @@ public function main() returns error? {
         name: "sample.txt"
     };
     mail:FileAttachment fileAttachment = check outlookClient->addFileAttachment("<Message ID>", attachment, 
-    "<Folder ID>");
+        "<Folder ID>");
     log:printInfo(fileAttachment.toString());
 }

@@ -31,7 +31,7 @@ mail:Configuration configuration = {clientConfig: {
 
 mail:Client outlookClient = check new (configuration);
 
-public function main() returns error? {
+public function main() {
     var result = outlookClient->deleteMailFolder("<mailFolderId>");
     if result is error {
          log:printError(result.toString());

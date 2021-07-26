@@ -52,3 +52,6 @@ const string JSON_TYPE = "application/json";
 
 //Json
 const string DESTINATION_ID = "destinationId";
+
+//File size
+const int & readonly MAX_SIZE = 3000000;

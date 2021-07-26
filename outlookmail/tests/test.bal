@@ -1,6 +1,23 @@
+// Copyright (c) 2021 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+//
+// WSO2 Inc. licenses this file to you under the Apache License,
+// Version 2.0 (the "License"); you may not use this file except
+// in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
 import ballerina/log;
 import ballerina/os;
 import ballerina/test;
+import ballerina/http;
 import ballerina/io;
 
 configurable string refreshUrl = os:getEnv("REFRESH_URL");
@@ -18,12 +35,11 @@ Configuration configuration = {
 };
 
 Client oneDriveClient = check new (configuration);
-string messageId = "";
-string createdDraftId = "";
-string sentMessageId = "";
-string mailFolderId = "";
-string searchMailFolderId = "";
-string attachmentId = "";
+string createdDraftId = EMPTY_STRING;
+string sentMessageId = EMPTY_STRING;
+string mailFolderId = EMPTY_STRING;
+string searchMailFolderId = EMPTY_STRING;
+string attachmentId = EMPTY_STRING;
 
 @test:Config {
     enable: true,
@@ -35,8 +51,7 @@ function testListMessages() {
     if (output is stream<Message, error?>) {
         int index = 0;
         error? e = output.forEach(function(Message queryResult) {
-            index = index + 1;
-            messageId = queryResult?.id.toString();
+            index += 1;
         });
         log:printInfo("Total count of records : " + index.toString());
     } else {
@@ -80,7 +95,7 @@ function tesCreateDraft() {
 }
 function testGetMessage() {
     log:printInfo("oneDriveClient->testGetMessage()");
-    var output = oneDriveClient->getMessage(messageId, bodyContentType = "text");
+    var output = oneDriveClient->getMessage(createdDraftId, bodyContentType = "text");
     if (output is Message) {
         log:printInfo(output?.body.toString());
     } else {
@@ -90,7 +105,7 @@ function testGetMessage() {
 
 @test:Config {
     enable: true,
-    dependsOn: [testListMessages]
+    dependsOn: [testGetMessage]
 }
 function testUpdateMessage() {
     log:printInfo("oneDriveClient->updateMessage()");
@@ -110,7 +125,7 @@ function testUpdateMessage() {
         }
         ]
     };
-    var output = oneDriveClient->updateMessage(messageId, message, "drafts");
+    var output = oneDriveClient->updateMessage(createdDraftId, message, "drafts");
     if (output is Message) {
         log:printInfo(output?.subject.toString());
     } else {
@@ -120,7 +135,7 @@ function testUpdateMessage() {
 
 @test:Config {
     enable: true,
-    dependsOn: [tesCreateDraft]
+    dependsOn: [testUpdateMessage]
 }
 function testCopyMessage() {
     log:printInfo("oneDriveClient->testCopyMessage()");
@@ -145,7 +160,7 @@ function testForwardMessage() {
 
 @test:Config {
     enable: true,
-    dependsOn: [testCopyMessage]
+    dependsOn: [testForwardMessage]
 }
 function testSendExistingDraftMessage() {
     log:printInfo("oneDriveClient->testSendDraftMessage()");
@@ -157,7 +172,7 @@ function testSendExistingDraftMessage() {
 
 @test:Config {
     enable: true,
-    dependsOn: [testUpdateMessage, testGetMessage, testCopyMessage, testForwardMessage, testSendExistingDraftMessage]
+    dependsOn: [testDeleteAttachment]
 }
 function testDeleteMessage() {
     log:printInfo("oneDriveClient->testDeleteMessage()");
@@ -167,13 +182,13 @@ function testDeleteMessage() {
         int index = 0;
         error? e = output.forEach(function(Message queryResult) {
             if (queryResult?.hasAttachments == false) {
-                messageId = queryResult?.id.toString();
+                createdDraftId = queryResult?.id.toString();
             }
             index = index + 1;
         });
         log:printInfo("Total count of sent messages : " + index.toString());
     }
-    var response = oneDriveClient->deleteMessage(messageId, "sentitems");
+    var response = oneDriveClient->deleteMessage(createdDraftId, "sentitems");
     if (response is error) {
         test:assertFail(msg = response.toString());
     }
@@ -181,7 +196,7 @@ function testDeleteMessage() {
 
 @test:Config {
     enable: true,
-    dependsOn: [testListMessages]
+    dependsOn: [testSendExistingDraftMessage]
 }
 function testSendMessage() {
     log:printInfo("oneDriveClient->testSendMessage()");
@@ -225,8 +240,8 @@ function testSendMessage() {
 }
 
 @test:Config {
-    enable: true
-//dependsOn: [testSendMessage]
+    enable: true,
+    dependsOn: [testSendMessage]
 }
 function testListAttachment() {
     log:printInfo("oneDriveClient->testListAttachment()");
@@ -389,13 +404,13 @@ function testCreateMailSearchFolder() {
 
 @test:Config {
     enable: true,
-    dependsOn: [tesCreateDraft]
+    dependsOn: [testListAttachment]
 }
 function testAddLargeFileAttachment() returns @tainted error? {
     log:printInfo("oneDriveClient->TestAddLargeFileAttachments");
     stream<io:Block, io:Error?> blockStream = check 
     io:fileReadBlocksAsStream("outlookmail/tests/sample.pdf", 3000000);
-    var output = oneDriveClient->addLargeFileAttachments(createdDraftId, "myFile.pdf", blockStream, fileSize = 10635049);
+    var output = oneDriveClient->addLargeFileAttachments(sentMessageId, "myFile.pdf", blockStream, fileSize = 10635049);
     if (output is error) {
         test:assertFail(msg = output.toString());
     }
@@ -403,12 +418,24 @@ function testAddLargeFileAttachment() returns @tainted error? {
 
 @test:Config {
     enable: true,
-    dependsOn: [testAddFileAttachment]
+    dependsOn: [testAddLargeFileAttachment]
 }
 function testDeleteAttachment() returns @tainted error? {
     log:printInfo("oneDriveClient->testDeleteAttachment()");
     var output = oneDriveClient->deleteAttachment(sentMessageId, attachmentId);
     if (output is error) {
         test:assertFail(msg = output.toString());
+    }
+}
+
+@test:AfterSuite  {}
+function afterFunc() returns error? {
+    var output = oneDriveClient->listMessages(folderId = "sentitems", 
+    optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"&top=2");
+    if (output is stream<Message, error>) {
+        error? e = output.forEach(function(Message queryResult) {
+            string messageID = queryResult?.id.toString(); 
+            http:Response|error result =  oneDriveClient->deleteMessage(messageID, "sentitems");
+        });
     }
 }

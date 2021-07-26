@@ -69,13 +69,13 @@ isolated function uploadByteArray(byte[] file, UploadSession session) returns @t
         request.addHeader("Content-Type", "application/octet-stream");
         request.addHeader("Content-Range", string `bytes ${currentPosition}-${endPosition - 1}/${file.length().toString()}`);
         if (isFinalRequest) {
-            http:Response response = check uploadClient->put("", request);
+            http:Response response = check uploadClient->put(EMPTY_STRING, request);
             if (response.statusCode != http:STATUS_CREATED) {
                 fail error((check response.getJsonPayload()).toString());
             }
             break;
         }
-        uploadSession = check uploadClient->put("", request, targetType = UploadSession);
+        uploadSession = check uploadClient->put(EMPTY_STRING, request, targetType = UploadSession);
         currentPosition = check 'int:fromString(uploadSession.nextExpectedRanges[0]);
     }
 }
@@ -83,7 +83,7 @@ isolated function uploadByteArray(byte[] file, UploadSession session) returns @t
 isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fileSize, UploadSession session) returns 
                                     @tainted error? {
     int currentPosition = 0;
-    int maxSize = 3000000;
+    int maxSize = MAX_SIZE;
     boolean isFinalRequest = false;
     UploadSession uploadSession = session;
     http:Client uploadClient = check new (session?.uploadUrl.toString(), {
@@ -107,7 +107,7 @@ isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fil
             request.addHeader("Content-Length", byteBlock.value.length().toString());
             request.addHeader("Content-Type", "application/octet-stream");
             request.addHeader("Content-Range", string `bytes ${currentPosition}-${endPosition - 1}/${fileSize.toString()}`);
-            http:Response response = check uploadClient->put("", request);
+            http:Response response = check uploadClient->put(EMPTY_STRING, request);
             currentPosition = endPosition;
         }
     }
@@ -149,7 +149,7 @@ isolated function addOdataFileType(MessageContent|FileAttachment messageContent)
 }
 
 isolated function addChildFolderIds(string[] childFoldersIds) returns string {
-    string requestParams = "";
+    string requestParams = EMPTY_STRING;
     foreach string ids in childFoldersIds {
         requestParams += "/childFolders/" + ids;
     }

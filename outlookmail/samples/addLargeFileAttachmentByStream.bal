@@ -33,8 +33,5 @@ mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
     stream<io:Block, io:Error?> blockStream = check io:fileReadBlocksAsStream("<file path>", 3000000);  
-    var output = outlookClient->addLargeFileAttachments(createdDraftId, "myFile.pdf", blockStream, fileSize = 10635049);
-    if output is error {
-        log:printError(output.toString());
-    }
+    _= check outlookClient->addLargeFileAttachments(createdDraftId, "myFile.pdf", blockStream, fileSize = 10635049);
 }
