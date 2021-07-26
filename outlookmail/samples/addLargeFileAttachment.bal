@@ -32,9 +32,6 @@ mail:Configuration configuration = {clientConfig: {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    var output = outlookClient->addLargeFileAttachments("<Message ID>", "<Attachment Name>", 
-    file = "<FilePath or Byte Array>");
-    if output is error {
-        log:printError(output.toString());
-    }
+    _= check outlookClient->addLargeFileAttachments("<Message ID>", "<Attachment Name>", 
+        file = "<FilePath or Byte Array>");
 }

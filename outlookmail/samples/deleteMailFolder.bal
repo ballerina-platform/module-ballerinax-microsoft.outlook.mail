@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/log;
+import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
 configurable string refreshUrl = ?;
@@ -32,8 +33,5 @@ mail:Configuration configuration = {clientConfig: {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    var result = outlookClient->deleteMailFolder("<mailFolderId>");
-    if result is error {
-         log:printError(result.toString());
-    }  
+    http:Response response = check outlookClient->deleteMailFolder("<mailFolderId>");
 }
