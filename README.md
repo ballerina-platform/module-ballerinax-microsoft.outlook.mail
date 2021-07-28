@@ -7,7 +7,7 @@ Ballerina connector for Microsoft Outlook [Mail](https://docs.microsoft.com/en-u
 access Microsoft Cloud service resources. This version of the connector supports most of the important mail service related operations.
  
 For more information, go to the module(s).
-- [ballerinax/microsoft.outlook.mail](https://github.com/SanduDS/module-ballerinax-microsoft.outlook.mail/tree/main/outlookmail)
+- [microsoft.outlook.mail](outlookmail/Module.md)
  
 ## Building from the Source
 ### Setting Up the Prerequisites

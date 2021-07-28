@@ -19,7 +19,7 @@ import ballerina/io;
 
 # Ballerina Client for microsoft outlook mail operations.
 @display {
-    label: "Microsoft Outlook.mail Client",
+    label: "Microsoft Outlook Mail Client",
     iconPath: "MSOutlookMailLogo.svg"
 }
 public client class Client {
