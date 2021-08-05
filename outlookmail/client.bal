@@ -17,22 +17,26 @@
 import ballerina/http;
 import ballerina/io;
 
-# Ballerina Client for microsoft outlook mail operations.
+# Microsoft Outlook mail API provides capability to access Outlook mail operations related to messages, attachments, drafts, 
+# mail folder, and child mail folders.
 @display {
-    label: "Microsoft Outlook.mail Client",
+    label: "Microsoft Outlook Mail Client",
     iconPath: "MSOutlookMailLogo.svg"
 }
-public client class Client {
-    http:Client httpClient;
-    Configuration config;
+public isolated  client class Client {
+    final http:Client httpClient;
+    final readonly & Configuration config;
 
-    # Client Initialization
+    # Gets invoked to initialize the `connector`.
+    # The connector initialization requires setting the API credentials.
+    # Create an [Microsoft Outlook Account](https://outlook.live.com/owa/) and obtain tokens by following 
+    # [this guide](https://docs.microsoft.com/en-us/graph/auth-v2-user#authentication-and-authorization-steps)
     #
     # + config - Configuration for client connector
     # + return - If success returns null otherwise returns the relevant error  
     public isolated function init(Configuration config) returns error? {
         self.httpClient = check getOutlookClient(config, BASE_URL);
-        self.config = config;
+        self.config = config.cloneReadOnly();
     }
 
     # Gets the messages in the signed-in user's mailbox (including the Deleted Items and Clutter folders)
@@ -417,7 +421,7 @@ public client class Client {
     }
 }
 
-# Represents configuration parameters to create Azure Cosmos DB client.
+# Represents configuration parameters to create Microsoft Outlook Mail client.
 #
 # + clientConfig - OAuth client configuration
 # + secureSocketConfig - SSH configuration

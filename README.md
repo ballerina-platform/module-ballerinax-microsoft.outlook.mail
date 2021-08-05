@@ -7,7 +7,7 @@ Ballerina connector for Microsoft Outlook [Mail](https://docs.microsoft.com/en-u
 access Microsoft Cloud service resources. This version of the connector supports most of the important mail service related operations.
  
 For more information, go to the module(s).
-- [ballerinax/microsoft.outlook.mail](https://github.com/SanduDS/module-ballerinax-microsoft.outlook.mail/tree/main/outlookmail)
+- [microsoft.outlook.mail](outlookmail/Module.md)
  
 ## Building from the Source
 ### Setting Up the Prerequisites
@@ -27,11 +27,11 @@ For more information, go to the module(s).
  
 Execute the commands below to build from the source.
  
-1. To build the package:
+* To build the package:
    ```   
    bal build -c ./outlookmail
    ```
-2. To run the without tests:
+* To build the package without tests:
    ```
    bal build -c --skip-tests ./outlookmail
    ```
