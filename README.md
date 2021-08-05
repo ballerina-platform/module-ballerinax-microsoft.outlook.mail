@@ -27,11 +27,11 @@ For more information, go to the module(s).
  
 Execute the commands below to build from the source.
  
-1. To build the package:
+* To build the package:
    ```   
    bal build -c ./outlookmail
    ```
-2. To run the without tests:
+* To build the package without tests:
    ```
    bal build -c --skip-tests ./outlookmail
    ```
