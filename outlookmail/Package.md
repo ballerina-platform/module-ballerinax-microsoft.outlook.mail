@@ -1,6 +1,6 @@
 Connects to Microsoft Outlook Mail from Ballerina
 ## Package overview
-The microsoft.outlook.mail is a [Ballerina](https://ballerina.io/) connector for Microsoft Outlook mail service.
+The outlook mail is a [Ballerina](https://ballerina.io/) connector for Microsoft Outlook mail service.
 This package provides the capability to access Microsoft Outlook mail service.
 ### Compatibility
 |                               | Version                              |

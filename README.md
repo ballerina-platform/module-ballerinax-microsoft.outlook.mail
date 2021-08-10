@@ -1,10 +1,10 @@
 Ballerina Microsoft Outlook Mail Connector
 ===================
  
-[Microsoft Outlook Mail](https://outlook.live.com/owa/) is the  webmail service of the outlook personal information manager software system from Microsoft, available as a part of the Microsoft Office suite
+[Microsoft Outlook Mail](https://outlook.live.com/owa/) is the  webmail service of the outlook personal information manager software system from Microsoft, available as a part of the Microsoft Office suite.
 
-Ballerina connector for Microsoft Outlook [Mail](https://docs.microsoft.com/en-us/graph/api/resources/mail-api-overview?view=graph-rest-1.0) has been developed on top of Microsoft Graph that provides REST web APIs that empowers you to 
-access Microsoft Cloud service resources. This version of the connector supports most of the important mail service related operations.
+Ballerina connector for Microsoft [Outlook Mail](https://docs.microsoft.com/en-us/graph/api/resources/mail-api-overview?view=graph-rest-1.0) provides you the capability to access Microsoft Cloud service resources. The connector internally uses the Microsoft Graph that provides REST web APIs.
+This version of the connector supports most of the mail service-related operations.
  
 For more information, go to the module(s).
 - [microsoft.outlook.mail](outlookmail/Module.md)

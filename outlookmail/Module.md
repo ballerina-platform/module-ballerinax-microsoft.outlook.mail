@@ -1,6 +1,6 @@
 ## Overview
-Microsoft Outlook mail API provides capability to access Outlook mail operations related to messages, attachments, drafts, 
-mail folder, and child mail folders.
+Ballerina connector for Microsoft Outlook mail provides access to the Microsoft Outlook mail service in Microsoft Graph v1.0 via the 
+[Ballerina language](https://ballerina.io/). It provides the capability to perform more useful functionalities provided in Microsoft outlook mail such as sending messages, listing messages, creating drafts, mail folders, deleting messages, updating messages, etc.
 
 This module supports [Microsoft Graph (Mail) API v1.0](https://docs.microsoft.com/en-us/graph/api/resources/message?view=graph-rest-1.0).
 
@@ -8,7 +8,7 @@ This module supports [Microsoft Graph (Mail) API v1.0](https://docs.microsoft.co
 Before using this connector in your Ballerina application, complete the following:
 * Create [Microsoft Outlook Account](https://outlook.live.com/owa/)
 * Obtaining tokens
-1. Follow [this link](https://docs.microsoft.com/en-us/graph/auth-v2-user#authentication-and-authorization-steps) and obtain the client ID, client secret and refresh token.
+1. Follow [this link](https://docs.microsoft.com/en-us/graph/auth-v2-user#authentication-and-authorization-steps) and obtain the client ID, client secret, and refresh token.
  
 ## Quickstart
 
