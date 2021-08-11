@@ -1,29 +1,28 @@
 ## Overview
-Ballerina connector for Microsoft Outlook mail provides access to Microsoft Outlook mail service in Microsoft Graph v1.0 via Ballerina language easily. It provides capability to perform more useful functionalities provided in Microsoft outlook mail such as sending messages, listing messages, creating drafts, mail folders, deleting and updating messages etc. 
+Ballerina connector for Microsoft Outlook mail provides access to the Microsoft Outlook mail service in Microsoft Graph v1.0 via the 
+[Ballerina language](https://ballerina.io/). It provides the capability to perform more useful functionalities provided in Microsoft outlook mail such as sending messages, listing messages, creating drafts, mail folders, deleting messages, updating messages, etc.
 
-This module supports Microsoft Graph (Mail) API v1.0 version.
+This module supports [Microsoft Graph (Mail) API v1.0](https://docs.microsoft.com/en-us/graph/api/resources/message?view=graph-rest-1.0).
 
 ## Prerequisites
 Before using this connector in your Ballerina application, complete the following:
 * Create [Microsoft Outlook Account](https://outlook.live.com/owa/)
 * Obtaining tokens
-        
-    Follow [this link](https://docs.microsoft.com/en-us/graph/auth-v2-user#authentication-and-authorization-steps) and obtain the client ID, client secret and refresh token.
-* Configure the connector with obtained tokens
+1. Follow [this link](https://docs.microsoft.com/en-us/graph/auth-v2-user#authentication-and-authorization-steps) and obtain the client ID, client secret, and refresh token.
  
 ## Quickstart
 
 To use the Outlook mail connector in your Ballerina application, update the .bal file as follows:
 
-Step 1: Import MS Outlook Mail Package
-First, import the ballerinax/microsoft.outlook.mail module into the Ballerina project.
+### Step 1 - Import connector
+Import the `ballerinax/microsoft.outlook.mail` module into the Ballerina project.
 ```ballerina
 import ballerinax/microsoft.outlook.mail;
 ```
-Step 2: Configure the connection to an existing Azure AD app
+### Step 2: - Create a new connector instance
 You can now make the connection configuration using the OAuth2 refresh token grant config.
 ```ballerina
-outlookMail:Configuration configuration = {
+mail:Configuration configuration = {
     clientConfig: {
         refreshUrl: <REFRESH_URL>,
         refreshToken : <REFRESH_TOKEN>,
@@ -33,40 +32,33 @@ outlookMail:Configuration configuration = {
 };
 
 mail:Client outlookClient = check new(configuration);
-
 ```
-Step 3: Send a message
-```
+### Step 3: Invoke connector operation
+1. Send a new message using the sendMessage remote operation
+```ballerina
 public function main() returns error? {
-    mail:DraftMessage draft = {
-        subject:"<Mail Subject>",
-        importance:"Low",
-        body:{
-            "contentType": "HTML",
-            "content": "We are <b>Wso2</b>!"
-        },
-        toRecipients:[
-            {
-                emailAddress:{
-                    address: "<Your Email Address>",
-                    name: "Name (Optional)"
+    mail:MessageContent messageContent = {
+        message: {
+            subject: "Ballerina Test Email",
+            importance: "Low",
+            body: {
+                "contentType": "HTML",
+                "content": "This is sent by sendMessage operation <b>Test</b>!"
+            },
+            toRecipients: [
+                {
+                    emailAddress: {
+                        address: "<email address>",
+                        name: "<name>"
+                    }
                 }
-            }
-        ]
+            ]
+        },
+        saveToSentItems: true
     };
-    mail:Message message = check outlookClient->createMessage(draft);
-    log:printInfo(message.toString());
+    http:Response response = check oneDriveClient->sendMessage(messageContent);
 }
-
 ``` 
-## Quick reference 
-* Get detail of a message from a mailbox
- ```ballerina
-   mail:Message message = check outlookClient->getMessage("<Message ID>");
-   ```
-* Send an existing draft
- ```ballerina
-    _= check outlookClient->sendDraftMessage("<Draft ID>");
-```
+2. Use `bal run` command to compile and run the Ballerina program.
 
-### [You can find more samples here](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/tree/main/outlookmail/samples)
+**[You can find more samples here](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/tree/main/outlookmail/samples)**
