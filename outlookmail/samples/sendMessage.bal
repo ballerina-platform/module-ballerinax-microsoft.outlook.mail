@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/log;
+import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
 configurable string refreshUrl = ?;
@@ -34,13 +35,24 @@ mail:Configuration configuration = {
 mail:Client outlookClient = check new(configuration);
 
 public function main() returns error? {
-  log:printInfo("outlookClient->listMessages()");
-    stream<mail:Message, error?> output = check outlookClient->listMessages(folderId = "drafts", 
-        optionalUriParameters="?$select:\"sender,subject\"");
-    int index = 0;
-    error? e = output.forEach(function (mail:Message queryResult) {
-        index = index + 1; 
-        log:printInfo(queryResult?.id.toString());
-    });
-    log:printInfo("Total count of records : " +  index.toString());         
+    mail:MessageContent messageContent = {
+        message: {
+            subject: "Ballerina Test Email",
+            importance: "Low",
+            body: {
+                "contentType": "HTML",
+                "content": "This is sent by sendMessage operation <b>Test</b>!"
+            },
+            toRecipients: [
+                {
+                emailAddress: {
+                    address: "<email address>",
+                    name: "<name>"
+                }
+            }
+            ]
+        },
+        saveToSentItems: true
+    };
+    http:Response response = check oneDriveClient->sendMessage(messageContent);       
 }

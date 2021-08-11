@@ -17,16 +17,20 @@
 import ballerina/http;
 import ballerina/io;
 
-# Ballerina Client for microsoft outlook mail operations.
+# Microsoft Outlook mail API provides capability to access Outlook mail operations related to messages, attachments, drafts, 
+# mail folder, and child mail folders.
 @display {
-    label: "Microsoft Outlook.mail Client",
+    label: "Microsoft Outlook Mail Client",
     iconPath: "MSOutlookMailLogo.svg"
 }
 public client class Client {
     http:Client httpClient;
     Configuration config;
 
-    # Client Initialization
+    # Gets invoked to initialize the `connector`.
+    # The connector initialization requires setting the API credentials.
+    # Create an [Microsoft Outlook Account](https://outlook.live.com/owa/) and obtain tokens by following 
+    # [this guide](https://docs.microsoft.com/en-us/graph/auth-v2-user#authentication-and-authorization-steps)
     #
     # + config - Configuration for client connector
     # + return - If success returns null otherwise returns the relevant error  
