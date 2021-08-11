@@ -5,7 +5,7 @@ This package provides the capability to access Microsoft Outlook mail service.
 ### Compatibility
 |                               | Version                              |
 |-------------------------------|--------------------------------------|
-| Ballerina Language            | Ballerina Swan Lake Beta 2           |
+| Ballerina Language            | Ballerina Swan Lake Beta3            |
 | Outlook.mail API              | Microsoft Graph (Mail) API v1.0      |
 
 ## Report Issues
