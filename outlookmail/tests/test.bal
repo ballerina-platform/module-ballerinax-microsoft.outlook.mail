@@ -243,36 +243,18 @@ function testSendMessage() {
     enable: true,
     dependsOn: [testSendMessage]
 }
-function testListAttachment() {
-    log:printInfo("oneDriveClient->testListAttachment()");
+function testAddAttachment() {
+    log:printInfo("oneDriveClient->testAddFileAttachment()");
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"");
     if (output is stream<Message, error>) {
         int index = 0;
         error? e = output.forEach(function(Message queryResult) {
-            if (queryResult?.hasAttachments == true) {
-                sentMessageId = queryResult?.id.toString();
-            }
+            sentMessageId = queryResult?.id.toString();
             index = index + 1;
         });
         log:printInfo("Total count of sent messages : " + index.toString());
     }
-    var result = oneDriveClient->listAttachment(sentMessageId, "sentitems");
-    if (result is stream<FileAttachment, error?>) {
-        int index = 0;
-        error? e = result.forEach(function(FileAttachment queryResult) {
-            index = index + 1;
-        });
-        log:printInfo("Total count of  Attachments : " + index.toString());
-    }
-}
-
-@test:Config {
-    enable: true,
-    dependsOn: [testListAttachment]
-}
-function testAddFileAttachment() {
-    log:printInfo("oneDriveClient->testAddFileAttachment()");
     FileAttachment attachment = {
         contentBytes: "SGVsbG8gV29ybGQh",
         contentType: "text/plain",
@@ -284,6 +266,21 @@ function testAddFileAttachment() {
         attachmentId = result?.id.toString();
     } else {
         test:assertFail(msg = result.toString());
+    }    
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testAddAttachment]
+}
+function testListAttachment() {
+    var result = oneDriveClient->listAttachment(sentMessageId, "sentitems");
+    if (result is stream<FileAttachment, error?>) {
+        int index = 0;
+        error? e = result.forEach(function(FileAttachment queryResult) {
+            index = index + 1;
+        });
+        log:printInfo("Total count of  Attachments : " + index.toString());
     }
 }
 
@@ -430,6 +427,7 @@ function testDeleteAttachment() returns @tainted error? {
 
 @test:AfterSuite  {}
 function afterFunc() returns error? {
+    log:printInfo("Removing sent messages");
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"&top=2");
     if (output is stream<Message, error>) {
