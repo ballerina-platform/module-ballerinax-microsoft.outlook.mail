@@ -178,7 +178,7 @@ function testDeleteMessage() {
     log:printInfo("oneDriveClient->testDeleteMessage()");
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select:\"sender,subject,hasAttachments\"");
-    if (output is stream<Message, error>) {
+    if (output is stream<Message, error?>) {
         int index = 0;
         error? e = output.forEach(function(Message queryResult) {
             if (queryResult?.hasAttachments == false) {
@@ -247,7 +247,7 @@ function testAddAttachment() {
     log:printInfo("oneDriveClient->testAddFileAttachment()");
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"");
-    if (output is stream<Message, error>) {
+    if (output is stream<Message, error?>) {
         int index = 0;
         error? e = output.forEach(function(Message queryResult) {
             sentMessageId = queryResult?.id.toString();
@@ -430,7 +430,7 @@ function afterFunc() returns error? {
     log:printInfo("Removing sent messages");
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"&top=2");
-    if (output is stream<Message, error>) {
+    if (output is stream<Message, error?>) {
         error? e = output.forEach(function(Message queryResult) {
             string messageID = queryResult?.id.toString(); 
             http:Response|error result =  oneDriveClient->deleteMessage(messageID, "sentitems");
