@@ -22,8 +22,8 @@ import ballerinax/microsoft.outlook.mail;
 ### Step 2: - Create a new connector instance
 You can now make the connection configuration using the OAuth2 refresh token grant config.
 ```ballerina
-mail:Configuration configuration = {
-    clientConfig: {
+mail:ConnectionConfig configuration = {
+    auth: {
         refreshUrl: <REFRESH_URL>,
         refreshToken : <REFRESH_TOKEN>,
         clientId : <CLIENT_ID>,
