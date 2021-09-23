@@ -25,8 +25,9 @@ hs_err_pid*
 /outlookmail/target
 /target
 
-# resources folder
-/resources
+# Generated json files in resources folder
+outlookmail/resources/*.json
+outlookmail/modules/outlook.mail/resources/*.json
 
 # idea files
 *.idea
@@ -45,3 +46,6 @@ build
 
 # Configurations
 Config.toml
+
+# .DS_Store
+*.DS_Store

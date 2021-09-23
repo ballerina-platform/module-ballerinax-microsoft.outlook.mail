@@ -22,12 +22,14 @@ configurable string refreshToken = ?;
 configurable string clientId = ?;
 configurable string clientSecret = ?;
 
-mail:Configuration configuration = {clientConfig: {
+mail:ConnectionConfig configuration = {
+    auth: {
         refreshUrl: refreshUrl,
         refreshToken: refreshToken,
         clientId: clientId,
         clientSecret: clientSecret
-    }};
+    }
+};
 
 mail:Client outlookClient = check new (configuration);
 

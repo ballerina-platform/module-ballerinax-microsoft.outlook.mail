@@ -20,10 +20,10 @@ class MessageStream {
     private Message[] messageEntries = [];
     int index = 0;
     string nextLink = EMPTY_STRING;
-    Configuration config;
+    ConnectionConfig config;
     string? queryParams;
 
-    public isolated function init(json payload, Configuration config, string? queryParams = ()) returns @tainted error? {
+    public isolated function init(json payload, ConnectionConfig config, string? queryParams = ()) returns @tainted error? {
         json[] messages = let var value = payload.value
             in value is json ? <json[]>value : [];
         foreach json message in messages {
@@ -59,7 +59,7 @@ class MessageStream {
     }
 }
 
-isolated function sendNextRequest(string nextLink, Configuration config) returns @tainted record {|Message[] messages;
+isolated function sendNextRequest(string nextLink, ConnectionConfig config) returns @tainted record {|Message[] messages;
                                   string nextLink;|}|error {
     http:Client tempOutlookClient = check getOutlookClient(config, nextLink);
     json payload = check tempOutlookClient->get(EMPTY_STRING, targetType = json);
