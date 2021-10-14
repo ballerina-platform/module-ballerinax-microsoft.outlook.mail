@@ -12,17 +12,17 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action@slbeta3
               with:
                   args:
-                      build -c ./outlookmail
+                      build -c --skip-tests ./outlookmail
               env:
                   REFRESH_URL: ${{ secrets.REFRESH_URL }}
                   REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
                   CLIENT_ID: ${{ secrets.CLIENT_ID }}
                   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
             - name: Ballerina Push
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action@slbeta3
               with:
                   args:
                       push
