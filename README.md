@@ -29,11 +29,11 @@ Execute the commands below to build from the source.
  
 * To build the package:
    ```   
-   bal build -c ./outlookmail
+   bal pack ./outlookmail
    ```
-* To build the package without tests:
+* To test the package after build:
    ```
-   bal build -c --skip-tests ./outlookmail
+   bal test ./outlookmail
    ```
 ## Contributing to Ballerina
  
