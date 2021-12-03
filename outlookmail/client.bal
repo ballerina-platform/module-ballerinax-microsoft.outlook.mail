@@ -21,7 +21,7 @@ import ballerina/io;
 # mail folder, and child mail folders.
 @display {
     label: "Microsoft Outlook Mail",
-    iconPath: "resources/microsoft.outlook.mail.svg"
+    iconPath: "icon.png"
 }
 public isolated  client class Client {
     final http:Client httpClient;
