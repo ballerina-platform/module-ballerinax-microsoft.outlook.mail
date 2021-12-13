@@ -50,6 +50,7 @@ class MessageStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 
     isolated function fetchMessages(string nextLink) returns @tainted Message[]|error {
@@ -102,6 +103,7 @@ class AttachmentStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 }
 
@@ -119,5 +121,6 @@ class MailFolderStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 }
