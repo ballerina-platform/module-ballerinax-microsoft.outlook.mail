@@ -16,8 +16,8 @@
 
 import ballerina/log;
 import ballerina/os;
-import ballerina/test;
 import ballerina/http;
+import ballerina/test;
 import ballerina/io;
 
 configurable string refreshUrl = os:getEnv("REFRESH_URL");
@@ -45,12 +45,12 @@ string attachmentId = EMPTY_STRING;
     enable: true,
     dependsOn: [tesCreateDraft]
 }
-function testListMessages() {
+function testListMessages() returns error? {
     log:printInfo("oneDriveClient->listMessages()");
     var output = oneDriveClient->listMessages(folderId = "drafts", optionalUriParameters = "?$select:\"sender,subject\"&top:2");
     if (output is stream<Message, error?>) {
         int index = 0;
-        error? e = output.forEach(function(Message queryResult) {
+        _ = check output.forEach(function(Message queryResult) {
             index += 1;
         });
         log:printInfo("Total count of records : " + index.toString());
@@ -174,13 +174,13 @@ function testSendExistingDraftMessage() {
     enable: true,
     dependsOn: [testDeleteAttachment]
 }
-function testDeleteMessage() {
+function testDeleteMessage() returns error? {
     log:printInfo("oneDriveClient->testDeleteMessage()");
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select:\"sender,subject,hasAttachments\"");
     if (output is stream<Message, error?>) {
         int index = 0;
-        error? e = output.forEach(function(Message queryResult) {
+        _ = check output.forEach(function(Message queryResult) {
             if (queryResult?.hasAttachments == false) {
                 createdDraftId = queryResult?.id.toString();
             }
@@ -243,13 +243,13 @@ function testSendMessage() {
     enable: true,
     dependsOn: [testSendMessage]
 }
-function testAddAttachment() {
+function testAddAttachment() returns error? {
     log:printInfo("oneDriveClient->testAddFileAttachment()");
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"");
     if (output is stream<Message, error?>) {
         int index = 0;
-        error? e = output.forEach(function(Message queryResult) {
+        _ = check output.forEach(function(Message queryResult) {
             sentMessageId = queryResult?.id.toString();
             index = index + 1;
         });
@@ -273,11 +273,11 @@ function testAddAttachment() {
     enable: true,
     dependsOn: [testAddAttachment]
 }
-function testListAttachment() {
+function testListAttachment() returns error? {
     var result = oneDriveClient->listAttachment(sentMessageId, "sentitems");
     if (result is stream<FileAttachment, error?>) {
         int index = 0;
-        error? e = result.forEach(function(FileAttachment queryResult) {
+        _ = check result.forEach(function(FileAttachment queryResult) {
             index = index + 1;
         });
         log:printInfo("Total count of  Attachments : " + index.toString());
@@ -302,12 +302,12 @@ function testCreateMailFolder() {
     enable: true,
     dependsOn: [testCreateMailFolder]
 }
-function testListMailFolders() {
+function testListMailFolders() returns error? {
     log:printInfo("oneDriveClient->testListMailFolder()");
     var result = oneDriveClient->listMailFolders(true);
     if (result is stream<MailFolder, error?>) {
         int index = 0;
-        error? e = result.forEach(function(MailFolder queryResult) {
+        _ = check result.forEach(function(MailFolder queryResult) {
             index = index + 1;
         });
         log:printInfo("Total count of  MailFolders : " + index.toString());
@@ -349,12 +349,12 @@ function testCreateChildMailFolder() {
     enable: true,
     dependsOn: [testCreateChildMailFolder]
 }
-function testListChildMailFolders() {
+function testListChildMailFolders() returns error? {
     log:printInfo("oneDriveClient->testListChildMailFolders()");
     var result = oneDriveClient->listChildMailFolders(mailFolderId, true);
     if (result is stream<MailFolder, error?>) {
         int index = 0;
-        error? e = result.forEach(function(MailFolder queryResult) {
+        _ = check result.forEach(function(MailFolder queryResult) {
             index = index + 1;
         });
         log:printInfo("Total count of  Child MailFolders : " + index.toString());
@@ -431,9 +431,12 @@ function afterFunc() returns error? {
     var output = oneDriveClient->listMessages(folderId = "sentitems", 
     optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"&top=2");
     if (output is stream<Message, error?>) {
-        error? e = output.forEach(function(Message queryResult) {
+        _ = check output.forEach(function(Message queryResult) {
             string messageID = queryResult?.id.toString(); 
             http:Response|error result =  oneDriveClient->deleteMessage(messageID, "sentitems");
+            if (result is error) {
+                test:assertFail(msg = result.toString());
+            }
         });
     }
 }

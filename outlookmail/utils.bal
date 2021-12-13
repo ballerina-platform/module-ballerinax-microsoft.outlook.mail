@@ -79,8 +79,6 @@ isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fil
                                     @tainted error? {
     int currentPosition = 0;
     int maxSize = MAX_SIZE;
-    boolean isFinalRequest = false;
-    UploadSession uploadSession = session;
     http:Client uploadClient = check new (session?.uploadUrl.toString(), {
         http1Settings: {
             chunking: 
@@ -102,7 +100,7 @@ isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fil
             request.addHeader("Content-Length", byteBlock.value.length().toString());
             request.addHeader("Content-Type", "application/octet-stream");
             request.addHeader("Content-Range", string `bytes ${currentPosition}-${endPosition - 1}/${fileSize.toString()}`);
-            http:Response response = check uploadClient->put(EMPTY_STRING, request);
+            _ = check uploadClient->put(EMPTY_STRING, request, targetType = http:Response);
             currentPosition = endPosition;
         }
     }
