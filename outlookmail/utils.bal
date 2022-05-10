@@ -106,15 +106,15 @@ isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fil
     }
 }
 
-isolated function addOdataFileType(MessageContent|FileAttachment messageContent) returns FileAttachment[] {
+isolated function addOdataFileType(MessageContent|FileAttachment messageContent) returns FileAttachment[]|error {
     FileAttachment[] attachments = [];
+    FileAttachment[] formattedAttachments = [];
     if (messageContent is FileAttachment) {
         attachments.push(messageContent);
     } else {
         attachments = messageContent?.message?.attachments ?: [];
     }
-    foreach int i in 0 ... attachments.length() {
-        FileAttachment attachment = attachments.remove(0);
+    foreach FileAttachment attachment in attachments {
         FileAttachment attachmentTemp = {
             contentBytes: attachment.contentBytes,
             name: attachment.name,
@@ -122,23 +122,23 @@ isolated function addOdataFileType(MessageContent|FileAttachment messageContent)
             "@odata.type": "#microsoft.graph.fileAttachment"
         };
         if (attachment?.id is string) {
-            attachmentTemp.id = attachment?.id.toString();
+            attachmentTemp.id = check attachment?.id.ensureType(string);
         }
         if (attachment?.contentId is string) {
-            attachmentTemp.contentId = attachment?.contentId.toString();
+            attachmentTemp.contentId = check attachment?.contentId.ensureType(string);
         }
         if (attachment?.isInline is boolean) {
             attachmentTemp.isInline = <boolean>attachment?.isInline;
         }
         if (attachment?.lastModifiedDateTime is string) {
-            attachmentTemp.lastModifiedDateTime = attachment?.lastModifiedDateTime.toString();
+            attachmentTemp.lastModifiedDateTime = check attachment?.lastModifiedDateTime.ensureType(string);
         }
         if (attachment?.size is int) {
             attachmentTemp.size = <int>attachment?.size;
         }
-        attachments.push(attachmentTemp);
+        formattedAttachments.push(attachmentTemp);
     }
-    return attachments;
+    return formattedAttachments;
 }
 
 isolated function addChildFolderIds(string[] childFoldersIds) returns string {

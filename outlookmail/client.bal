@@ -180,11 +180,11 @@ public isolated  client class Client {
     # + messageContent - The message content and properties
     # + return - If success returns null otherwise the relevant error
     @display {label: "Send Message"}
-    isolated remote function sendMessage(@display {label: "Message"} MessageContent messageContent) returns http:Response
-                                        |error {
+    isolated remote function sendMessage(@display {label: "Message"} MessageContent messageContent) returns 
+                                        http:Response|error {
         string requestParams = SEND_MAIL;
         http:Request request = new;
-        messageContent.message.attachments = addOdataFileType(messageContent);
+        messageContent.message.attachments = check addOdataFileType(messageContent);
         request.setJsonPayload(messageContent.toJson());
         return check self.httpClient->post(requestParams, request);
     }
@@ -288,8 +288,8 @@ public isolated  client class Client {
         requestParams += childFolderIds is () ? EMPTY_STRING : (addChildFolderIds(childFolderIds));
         requestParams += MESSAGES + messageId + SLASH_ATTACHMENTS;
         http:Request request = new;
-        FileAttachment formattedAttachment = addOdataFileType(attachment)[0];
-        request.setJsonPayload(formattedAttachment.toJson());
+        FileAttachment fmattachment = (check addOdataFileType(attachment))[0];
+        request.setJsonPayload(fmattachment.toJson());
         return check self.httpClient->post(requestParams, request, targetType = FileAttachment);
     }
 
