@@ -23,7 +23,24 @@ isolated function sendRequestGET(http:Client httpClient, string resources) retur
 }
 
 isolated function getOutlookClient(ConnectionConfig config, string baseUrl) returns http:Client|error {
-    return check new (baseUrl, config);
+    http:ClientConfiguration httpClientConfig = {
+        auth: config.auth,
+        httpVersion: config.httpVersion,
+        http1Settings: {...config.http1Settings},
+        http2Settings: config.http2Settings,
+        timeout: config.timeout,
+        forwarded: config.forwarded,
+        poolConfig: config.poolConfig,
+        cache: config.cache,
+        compression: config.compression,
+        circuitBreaker: config.circuitBreaker,
+        retryConfig: config.retryConfig,
+        responseLimits: config.responseLimits,
+        secureSocket: config.secureSocket,
+        proxy: config.proxy,
+        validation: config.validation
+    };
+    return check new (baseUrl, httpClientConfig);
 }
 
 isolated function getRecipientListAsRecord(string comment, string[] addressList) returns ForwardParamsList {
@@ -47,7 +64,7 @@ isolated function uploadByteArray(byte[] file, UploadSession session) returns @t
     UploadSession uploadSession = session;
     http:Client uploadClient = check new (session?.uploadUrl.toString(), {
         http1Settings: {
-            chunking: 
+            chunking:
         http:CHUNKING_NEVER
         }
     });
@@ -75,13 +92,13 @@ isolated function uploadByteArray(byte[] file, UploadSession session) returns @t
     }
 }
 
-isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fileSize, UploadSession session) returns 
+isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fileSize, UploadSession session) returns
                                     @tainted error? {
     int currentPosition = 0;
     int maxSize = MAX_SIZE;
     http:Client uploadClient = check new (session?.uploadUrl.toString(), {
         http1Settings: {
-            chunking: 
+            chunking:
         http:CHUNKING_NEVER
         }
     });
