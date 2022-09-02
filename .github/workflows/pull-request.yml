@@ -14,14 +14,4 @@ jobs:
         with:
           args:
             pack ./outlookmail
-      - name: Ballerina Test
-        uses: ballerina-platform/ballerina-action/@nightly
-        with:
-          args:
-            test ./outlookmail
-        env: 
-          REFRESH_URL: ${{ secrets.REFRESH_URL }}
-          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
              
