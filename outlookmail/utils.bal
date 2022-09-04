@@ -24,7 +24,7 @@ isolated function sendRequestGET(http:Client httpClient, string resources) retur
 
 isolated function getOutlookClient(ConnectionConfig config, string baseUrl) returns http:Client|error {
     http:ClientConfiguration httpClientConfig = {
-        auth: config.auth,
+        auth: let var authConfig = config.auth in (authConfig is BearerTokenConfig ? authConfig : {...authConfig}),
         httpVersion: config.httpVersion,
         http1Settings: {...config.http1Settings},
         http2Settings: config.http2Settings,
