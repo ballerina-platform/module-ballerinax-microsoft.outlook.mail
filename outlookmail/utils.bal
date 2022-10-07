@@ -15,31 +15,16 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/lang.'int;
 import ballerina/io;
+import ballerina/lang.'int;
+import ballerinax/'client.config;
 
 isolated function sendRequestGET(http:Client httpClient, string resources) returns @tainted json|error {
     return httpClient->get(resources, targetType = json);
 }
 
 isolated function getOutlookClient(ConnectionConfig config, string baseUrl) returns http:Client|error {
-    http:ClientConfiguration httpClientConfig = {
-        auth: let var authConfig = config.auth in (authConfig is BearerTokenConfig ? authConfig : {...authConfig}),
-        httpVersion: config.httpVersion,
-        http1Settings: {...config.http1Settings},
-        http2Settings: config.http2Settings,
-        timeout: config.timeout,
-        forwarded: config.forwarded,
-        poolConfig: config.poolConfig,
-        cache: config.cache,
-        compression: config.compression,
-        circuitBreaker: config.circuitBreaker,
-        retryConfig: config.retryConfig,
-        responseLimits: config.responseLimits,
-        secureSocket: config.secureSocket,
-        proxy: config.proxy,
-        validation: config.validation
-    };
+    http:ClientConfiguration httpClientConfig = check config:constructHTTPClientConfig(config);
     return check new (baseUrl, httpClientConfig);
 }
 
