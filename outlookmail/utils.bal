@@ -48,6 +48,7 @@ isolated function uploadByteArray(byte[] file, UploadSession session) returns @t
     boolean isFinalRequest = false;
     UploadSession uploadSession = session;
     http:Client uploadClient = check new (session?.uploadUrl.toString(), {
+        httpVersion: http:HTTP_1_1,
         http1Settings: {
             chunking:
         http:CHUNKING_NEVER
@@ -82,6 +83,7 @@ isolated function uploadByteStream(stream<io:Block, error?> fileStream, int? fil
     int currentPosition = 0;
     int maxSize = MAX_SIZE;
     http:Client uploadClient = check new (session?.uploadUrl.toString(), {
+        httpVersion: http:HTTP_1_1,
         http1Settings: {
             chunking:
         http:CHUNKING_NEVER
