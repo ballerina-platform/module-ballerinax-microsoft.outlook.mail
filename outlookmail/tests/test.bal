@@ -42,24 +42,6 @@ string searchMailFolderId = EMPTY_STRING;
 string attachmentId = EMPTY_STRING;
 
 @test:Config {
-    enable: true,
-    dependsOn: [tesCreateDraft]
-}
-function testListMessages() returns error? {
-    log:printInfo("outlookClient->listMessages()");
-    var output = outlookClient->listMessages(folderId = "drafts", optionalUriParameters = "?$select:\"sender,subject\"&top:2");
-    if (output is stream<Message, error?>) {
-        int index = 0;
-        _ = check output.forEach(function(Message queryResult) {
-            index += 1;
-        });
-        log:printInfo("Total count of records : " + index.toString());
-    } else {
-        test:assertFail(msg = output.toString());
-    }
-}
-
-@test:Config {
     enable: true
 }
 function tesCreateDraft() {
@@ -84,6 +66,24 @@ function tesCreateDraft() {
     if (output is Message) {
         log:printInfo(output?.id.toString());
         createdDraftId = <@untainted>output?.id.toString();
+    } else {
+        test:assertFail(msg = output.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [tesCreateDraft]
+}
+function testListMessages() returns error? {
+    log:printInfo("outlookClient->listMessages()");
+    var output = outlookClient->listMessages(folderId = "drafts", optionalUriParameters = "?$select:\"sender,subject\"&top:2");
+    if (output is stream<Message, error?>) {
+        int index = 0;
+        _ = check output.forEach(function(Message queryResult) {
+            index += 1;
+        });
+        log:printInfo("Total count of records : " + index.toString());
     } else {
         test:assertFail(msg = output.toString());
     }
@@ -172,30 +172,6 @@ function testSendExistingDraftMessage() {
 
 @test:Config {
     enable: true,
-    dependsOn: [testDeleteAttachment]
-}
-function testDeleteMessage() returns error? {
-    log:printInfo("outlookClient->testDeleteMessage()");
-    var output = outlookClient->listMessages(folderId = "sentitems", 
-    optionalUriParameters = "?$select:\"sender,subject,hasAttachments\"");
-    if (output is stream<Message, error?>) {
-        int index = 0;
-        _ = check output.forEach(function(Message queryResult) {
-            if (queryResult?.hasAttachments == false) {
-                createdDraftId = queryResult?.id.toString();
-            }
-            index = index + 1;
-        });
-        log:printInfo("Total count of sent messages : " + index.toString());
-    }
-    var response = outlookClient->deleteMessage(createdDraftId, "sentitems");
-    if (response is error) {
-        test:assertFail(msg = response.toString());
-    }
-}
-
-@test:Config {
-    enable: true,
     dependsOn: [testSendExistingDraftMessage]
 }
 function testSendMessage() {
@@ -227,37 +203,6 @@ function testSendMessage() {
                 }
             ],
             attachments: [attachment1, attachment2]
-        },
-        saveToSentItems: true
-    };
-
-    var output = outlookClient->sendMessage(messageReq);
-    if (output is error) {
-        test:assertFail(msg = output.toString());
-    } 
-}
-
-@test:Config {
-    enable: true
-}
-function testSendMessageWithoutAttachment() {
-    log:printInfo("outlookClient->testSendMessageWithoutAttachments()");
-    MessageContent messageReq = {
-        message: {
-            subject: "Ballerina Test Email Without an Attachment",
-            importance: "Low",
-            body: {
-                "contentType": "HTML",
-                "content": "This is sent by sendMessage operation <b>Test</b>!"
-            },
-            toRecipients: [
-                {
-                    emailAddress: {
-                        address: "dhanushkas@wso2.com",
-                        name: "Dhanushka"
-                    }
-                }
-            ]
         },
         saveToSentItems: true
     };
@@ -314,11 +259,94 @@ function testListAttachment() returns error? {
 }
 
 @test:Config {
-    enable: true
+    enable: true,
+    dependsOn: [testListAttachment]
+}
+function testAddLargeFileAttachment() returns @tainted error? {
+    log:printInfo("outlookClient->TestAddLargeFileAttachments");
+    stream<io:Block, io:Error?> blockStream = check 
+    io:fileReadBlocksAsStream("outlookmail/tests/sample.pdf", 3000000);
+    var output = outlookClient->addLargeFileAttachments(sentMessageId, "myFile.pdf", blockStream, fileSize = 10635049);
+    if (output is error) {
+        test:assertFail(msg = output.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testAddLargeFileAttachment]
+}
+function testDeleteAttachment() returns @tainted error? {
+    log:printInfo("outlookClient->testDeleteAttachment()");
+    var output = outlookClient->deleteAttachment(sentMessageId, attachmentId);
+    if (output is error) {
+        test:assertFail(msg = output.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testDeleteAttachment]
+}
+function testDeleteMessage() returns error? {
+    log:printInfo("outlookClient->testDeleteMessage()");
+    var output = outlookClient->listMessages(folderId = "sentitems", 
+    optionalUriParameters = "?$select:\"sender,subject,hasAttachments\"");
+    if (output is stream<Message, error?>) {
+        int index = 0;
+        _ = check output.forEach(function(Message queryResult) {
+            if (queryResult?.hasAttachments == false) {
+                createdDraftId = queryResult?.id.toString();
+            }
+            index = index + 1;
+        });
+        log:printInfo("Total count of sent messages : " + index.toString());
+    }
+    var response = outlookClient->deleteMessage(createdDraftId, "sentitems");
+    if (response is error) {
+        test:assertFail(msg = response.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testDeleteMessage]
+}
+function testSendMessageWithoutAttachment() {
+    log:printInfo("outlookClient->testSendMessageWithoutAttachments()");
+    MessageContent messageReq = {
+        message: {
+            subject: "Ballerina Test Email Without an Attachment",
+            importance: "Low",
+            body: {
+                "contentType": "HTML",
+                "content": "This is sent by sendMessage operation <b>Test</b>!"
+            },
+            toRecipients: [
+                {
+                    emailAddress: {
+                        address: "dhanushkas@wso2.com",
+                        name: "Dhanushka"
+                    }
+                }
+            ]
+        },
+        saveToSentItems: true
+    };
+
+    var output = outlookClient->sendMessage(messageReq);
+    if (output is error) {
+        test:assertFail(msg = output.toString());
+    } 
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testSendMessageWithoutAttachment]
 }
 function testCreateMailFolder() {
     log:printInfo("outlookClient->testCreateMailFolder()");
-    var result = outlookClient->createMailFolder("Test_Folder_01", false);
+    var result = outlookClient->createMailFolder("Test_Folder_02", false);
     if result is error {
         test:assertFail(msg = result.toString());
     } else {
@@ -405,12 +433,13 @@ function testDeleteMailFolder() {
 }
 
 @test:Config {
-    enable: true
+    enable: true,
+    dependsOn: [testDeleteMailFolder]
 }
 function testCreateMailSearchFolder() {
     log:printInfo("outlookClient->testCreateMailSearchFolder()");
     MailSearchFolder mailSearchFolder = {
-        displayName: "TestSearch_04",
+        displayName: "TestSearch_05",
         includeNestedFolders: true,
         sourceFolderIds: ["inbox"],
         filterQuery: "contains(subject, 'weekly digest')"
@@ -428,44 +457,28 @@ function testCreateMailSearchFolder() {
     }
 }
 
-@test:Config {
-    enable: true,
-    dependsOn: [testListAttachment]
-}
-function testAddLargeFileAttachment() returns @tainted error? {
-    log:printInfo("outlookClient->TestAddLargeFileAttachments");
-    stream<io:Block, io:Error?> blockStream = check 
-    io:fileReadBlocksAsStream("outlookmail/tests/sample.pdf", 3000000);
-    var output = outlookClient->addLargeFileAttachments(sentMessageId, "myFile.pdf", blockStream, fileSize = 10635049);
-    if (output is error) {
-        test:assertFail(msg = output.toString());
-    }
-}
-
-@test:Config {
-    enable: true,
-    dependsOn: [testAddLargeFileAttachment]
-}
-function testDeleteAttachment() returns @tainted error? {
-    log:printInfo("outlookClient->testDeleteAttachment()");
-    var output = outlookClient->deleteAttachment(sentMessageId, attachmentId);
-    if (output is error) {
-        test:assertFail(msg = output.toString());
-    }
-}
 
 @test:AfterSuite  {}
 function afterFunc() returns error? {
     log:printInfo("Removing sent messages");
-    var output = outlookClient->listMessages(folderId = "sentitems", 
-    optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"&top=2");
-    if (output is stream<Message, error?>) {
-        _ = check output.forEach(function(Message queryResult) {
-            string messageID = queryResult?.id.toString(); 
-            http:Response|error result =  outlookClient->deleteMessage(messageID, "sentitems");
-            if (result is error) {
-                test:assertFail(msg = result.toString());
-            }
-        });
+    int index = 0;
+    while true {
+        var output = outlookClient->listMessages(folderId = "sentitems", 
+            optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"&top=2");
+        if (output is stream<Message, error?>) {
+            _ = check output.forEach(function(Message queryResult) {
+                string messageID = queryResult?.id.toString(); 
+                http:Response|error result =  outlookClient->deleteMessage(messageID, "sentitems");
+                if (result is error) {
+                    test:assertFail(msg = result.toString());
+                } else {
+                    index = index + 1;
+                }
+            });
+        }
+        if (index == 0) {
+            break;
+        }
+        index = 0;
     }
 }
