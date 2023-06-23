@@ -1,5 +1,7 @@
 Ballerina Microsoft Outlook Mail Connector
 ===================
+
+[![GraalVM Check](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/actions/workflows/build-with-bal-test-native.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/actions/workflows/build-with-bal-test-native.yml)
  
 [Microsoft Outlook Mail](https://outlook.live.com/owa/) is the  webmail service of the outlook personal information manager software system from Microsoft, available as a part of the Microsoft Office suite.
 
