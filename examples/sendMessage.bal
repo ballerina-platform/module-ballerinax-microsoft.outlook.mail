@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/log;
 import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
@@ -54,5 +53,5 @@ public function main() returns error? {
         },
         saveToSentItems: true
     };
-    http:Response response = check oneDriveClient->sendMessage(messageContent);
+    http:Response response = check outlookClient->sendMessage(messageContent);
 }

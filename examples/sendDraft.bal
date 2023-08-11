@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/log;
+import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
 configurable string refreshUrl = ?;
@@ -34,7 +35,7 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    error? output = outlookClient->sendDraftMessage("<createdDraftId>");
+    http:Response|error output = outlookClient->sendDraftMessage("<createdDraftId>");
     if (output is error) {
         log:printError(msg = "Sending Draft Failed", 'error = output);
     }

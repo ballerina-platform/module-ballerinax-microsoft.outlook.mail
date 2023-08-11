@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/log;
 import ballerinax/microsoft.outlook.mail;
+import ballerina/io;
 
 configurable string refreshUrl = ?;
 configurable string refreshToken = ?;
@@ -35,5 +35,5 @@ mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
     stream<io:Block, io:Error?> blockStream = check io:fileReadBlocksAsStream("<file path>", 3000000);
-    _ = check outlookClient->addLargeFileAttachments(createdDraftId, "myFile.pdf", blockStream, fileSize = 10635049);
+    _ = check outlookClient->addLargeFileAttachments("draftId", "myFile.pdf", blockStream, fileSize = 10635049);
 }
