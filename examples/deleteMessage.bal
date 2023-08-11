@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/log;
+import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
 configurable string refreshUrl = ?;
@@ -34,10 +35,5 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    var result = check outlookClient->listAttachment("<Message ID>", "<Folder ID or Well Known Name");
-    int index = 0;
-    error? e = result.forEach(function(mail:FileAttachment queryResult) {
-                                  index += 1;
-                              });
-    log:printInfo("Total Count of  Attachments : " + index.toString());
+    http:Response response = check outlookClient->deleteMessage("<MessageID>");
 }

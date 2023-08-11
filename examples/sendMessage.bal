@@ -35,5 +35,24 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    http:Response response= check outlookClient->deleteMessage("<MessageID>");
+    mail:MessageContent messageContent = {
+        message: {
+            subject: "Ballerina Test Email",
+            importance: "Low",
+            body: {
+                "contentType": "HTML",
+                "content": "This is sent by sendMessage operation <b>Test</b>!"
+            },
+            toRecipients: [
+                {
+                    emailAddress: {
+                        address: "<email address>",
+                        name: "<name>"
+                    }
+                }
+            ]
+        },
+        saveToSentItems: true
+    };
+    http:Response response = check oneDriveClient->sendMessage(messageContent);
 }

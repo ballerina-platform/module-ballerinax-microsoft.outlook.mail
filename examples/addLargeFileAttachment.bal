@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/log;
-import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
 configurable string refreshUrl = ?;
@@ -26,33 +25,15 @@ configurable string clientSecret = ?;
 mail:ConnectionConfig configuration = {
     auth: {
         refreshUrl: refreshUrl,
-        refreshToken : refreshToken,
-        clientId : clientId,
-        clientSecret : clientSecret
+        refreshToken: refreshToken,
+        clientId: clientId,
+        clientSecret: clientSecret
     }
 };
 
-mail:Client outlookClient = check new(configuration);
+mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    mail:MessageContent messageContent = {
-        message: {
-            subject: "Ballerina Test Email",
-            importance: "Low",
-            body: {
-                "contentType": "HTML",
-                "content": "This is sent by sendMessage operation <b>Test</b>!"
-            },
-            toRecipients: [
-                {
-                emailAddress: {
-                    address: "<email address>",
-                    name: "<name>"
-                }
-            }
-            ]
-        },
-        saveToSentItems: true
-    };
-    http:Response response = check oneDriveClient->sendMessage(messageContent);       
+    _ = check outlookClient->addLargeFileAttachments("<Message ID>", "<Attachment Name>",
+        file = "<FilePath or Byte Array>");
 }

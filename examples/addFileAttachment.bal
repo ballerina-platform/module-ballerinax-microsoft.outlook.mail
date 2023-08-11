@@ -34,6 +34,12 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    stream<io:Block, io:Error?> blockStream = check io:fileReadBlocksAsStream("<file path>", 3000000);  
-    _= check outlookClient->addLargeFileAttachments(createdDraftId, "myFile.pdf", blockStream, fileSize = 10635049);
+    mail:FileAttachment attachment = {
+        contentBytes: "SGVsbG8gV29ybGQh",
+        contentType: "text/plain",
+        name: "sample.txt"
+    };
+    mail:FileAttachment fileAttachment = check outlookClient->addFileAttachment("<Message ID>", attachment,
+        "<Folder ID>");
+    log:printInfo(fileAttachment.toString());
 }

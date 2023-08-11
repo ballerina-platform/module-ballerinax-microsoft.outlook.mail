@@ -31,11 +31,11 @@ Execute the commands below to build from the source.
  
 * To build the package:
    ```   
-   bal pack ./outlookmail
+   bal build ./ballerina
    ```
 * To test the package after build:
    ```
-   bal test ./outlookmail
+   bal test ./ballerina
    ```
 ## Contributing to Ballerina
  

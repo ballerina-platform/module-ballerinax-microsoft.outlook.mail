@@ -34,8 +34,22 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    error? output = outlookClient->sendDraftMessage("<createdDraftId>");
-    if (output is error) {
-        log:printError(msg = "Sending Draft Failed",'error = output);
-    }
+    mail:DraftMessage draft = {
+        subject: "<Mail Subject>",
+        importance: "Low",
+        body: {
+            "contentType": "HTML",
+            "content": "We are <b>Wso2</b>!"
+        },
+        toRecipients: [
+            {
+                emailAddress: {
+                    address: "<Your Email Address>",
+                    name: "Name (Optional)"
+                }
+            }
+        ]
+    };
+    mail:Message message = check outlookClient->createMessage(draft);
+    log:printInfo(message.toString());
 }
