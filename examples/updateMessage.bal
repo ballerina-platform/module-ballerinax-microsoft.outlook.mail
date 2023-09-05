@@ -17,39 +17,32 @@
 import ballerina/log;
 import ballerinax/microsoft.outlook.mail;
 
-configurable string refreshUrl = ?;
-configurable string refreshToken = ?;
-configurable string clientId = ?;
-configurable string clientSecret = ?;
+configurable string & readonly refreshUrl = ?;
+configurable string & readonly refreshToken = ?;
+configurable string & readonly clientId = ?;
+configurable string & readonly clientSecret = ?;
 
 mail:ConnectionConfig configuration = {
     auth: {
         refreshUrl: refreshUrl,
-        refreshToken : refreshToken,
-        clientId : clientId,
-        clientSecret : clientSecret
+        refreshToken: refreshToken,
+        clientId: clientId,
+        clientSecret: clientSecret
     }
 };
 
-mail:Client outlookClient = check new(configuration);
+mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    mail:DraftMessage draft = {
-        subject:"<Mail Subject>",
-        importance:"Low",
-        body:{
-            "contentType": "HTML",
-            "content": "We are <b>Wso2</b>!"
-        },
-        toRecipients:[
-            {
-                emailAddress:{
-                    address: "<Your Email Address>",
-                    name: "Name (Optional)"
-                }
-            }
-        ]
+    mail:MessageUpdateContent message = {
+        subject: "Update Subject",
+        importance: "Low",
+        body: {
+            contentType: "HTML",
+            content: "Updated Content<b>Test</b>!"
+        }
     };
-    mail:Message message = check outlookClient->createMessage(draft);
-    log:printInfo(message.toString());
+    mail:Message updatedMessage = check outlookClient->updateMessage("<messageId>", message, "<Folder ID>");
+    log:printInfo(updatedMessage?.subject.toString());
 }
+

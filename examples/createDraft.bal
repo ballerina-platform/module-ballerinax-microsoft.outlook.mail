@@ -34,6 +34,22 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    _= check outlookClient->addLargeFileAttachments("<Message ID>", "<Attachment Name>", 
-        file = "<FilePath or Byte Array>");
+    mail:DraftMessage draft = {
+        subject: "<Mail Subject>",
+        importance: "Low",
+        body: {
+            "contentType": "HTML",
+            "content": "We are <b>Wso2</b>!"
+        },
+        toRecipients: [
+            {
+                emailAddress: {
+                    address: "<Your Email Address>",
+                    name: "Name (Optional)"
+                }
+            }
+        ]
+    };
+    mail:Message message = check outlookClient->createMessage(draft);
+    log:printInfo(message.toString());
 }

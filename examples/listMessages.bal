@@ -34,10 +34,11 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    var result = check outlookClient->listAttachment("<Message ID>", "<Folder ID or Well Known Name");
+    var result = check outlookClient->listMessages("<Folder ID>",
+    optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"");
     int index = 0;
-    error? e = result.forEach(function(mail:FileAttachment queryResult) {
-                                  index += 1;
-                              });
+    error? e = result.forEach(function(mail:Message queryResult) {
+        index += 1;
+    });
     log:printInfo("Total Count of  Attachments : " + index.toString());
 }

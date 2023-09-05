@@ -17,10 +17,10 @@
 import ballerina/log;
 import ballerinax/microsoft.outlook.mail;
 
-configurable string & readonly refreshUrl = ?;
-configurable string & readonly refreshToken = ?;
-configurable string & readonly clientId = ?;
-configurable string & readonly clientSecret = ?;
+configurable string refreshUrl = ?;
+configurable string refreshToken = ?;
+configurable string clientId = ?;
+configurable string clientSecret = ?;
 
 mail:ConnectionConfig configuration = {
     auth: {
@@ -34,16 +34,12 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    mail:MessageUpdateContent message = {
-        subject:"Update Subject",
-        importance:"Low",
-        body:{
-            contentType: "HTML",
-            content: "Updated Content<b>Test</b>!"
-        }
+    mail:FileAttachment attachment = {
+        contentBytes: "SGVsbG8gV29ybGQh",
+        contentType: "text/plain",
+        name: "sample.txt"
     };
-    mail:Message updatedMessage = check outlookClient->updateMessage("<messageId>", message, "<Folder ID>");
-    log:printInfo(updatedMessage?.subject.toString());
+    mail:FileAttachment fileAttachment = check outlookClient->addFileAttachment("<Message ID>", attachment,
+        "<Folder ID>");
+    log:printInfo(fileAttachment.toString());
 }
-
-

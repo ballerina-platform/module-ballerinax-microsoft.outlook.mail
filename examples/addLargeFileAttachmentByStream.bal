@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/log;
 import ballerinax/microsoft.outlook.mail;
+import ballerina/io;
 
 configurable string refreshUrl = ?;
 configurable string refreshToken = ?;
@@ -34,8 +34,6 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    error? output = outlookClient->sendDraftMessage("<createdDraftId>");
-    if (output is error) {
-        log:printError(msg = "Sending Draft Failed",'error = output);
-    }
+    stream<io:Block, io:Error?> blockStream = check io:fileReadBlocksAsStream("<file path>", 3000000);
+    _ = check outlookClient->addLargeFileAttachments("draftId", "myFile.pdf", blockStream, fileSize = 10635049);
 }

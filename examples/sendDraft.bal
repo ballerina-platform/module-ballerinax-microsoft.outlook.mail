@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/log;
+import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
 configurable string refreshUrl = ?;
@@ -34,11 +35,8 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    var result = check outlookClient->listMessages("<Folder ID>", 
-    optionalUriParameters = "?$select: \"sender,subject,hasAttachments\"");
-    int index = 0;
-    error? e = result.forEach(function(mail:Message queryResult) {
-                                  index += 1;
-                              });
-    log:printInfo("Total Count of  Attachments : " + index.toString());
+    http:Response|error output = outlookClient->sendDraftMessage("<createdDraftId>");
+    if (output is error) {
+        log:printError(msg = "Sending Draft Failed", 'error = output);
+    }
 }

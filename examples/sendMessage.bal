@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/log;
 import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
@@ -26,13 +25,13 @@ configurable string clientSecret = ?;
 mail:ConnectionConfig configuration = {
     auth: {
         refreshUrl: refreshUrl,
-        refreshToken : refreshToken,
-        clientId : clientId,
-        clientSecret : clientSecret
+        refreshToken: refreshToken,
+        clientId: clientId,
+        clientSecret: clientSecret
     }
 };
 
-mail:Client outlookClient = check new(configuration);
+mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
     mail:MessageContent messageContent = {
@@ -45,14 +44,14 @@ public function main() returns error? {
             },
             toRecipients: [
                 {
-                emailAddress: {
-                    address: "<email address>",
-                    name: "<name>"
+                    emailAddress: {
+                        address: "<email address>",
+                        name: "<name>"
+                    }
                 }
-            }
             ]
         },
         saveToSentItems: true
     };
-    http:Response response = check oneDriveClient->sendMessage(messageContent);       
+    http:Response response = check outlookClient->sendMessage(messageContent);
 }

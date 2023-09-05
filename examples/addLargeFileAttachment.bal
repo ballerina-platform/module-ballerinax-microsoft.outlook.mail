@@ -14,8 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/log;
-import ballerina/http;
 import ballerinax/microsoft.outlook.mail;
 
 configurable string refreshUrl = ?;
@@ -35,5 +33,6 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    http:Response response = check outlookClient->deleteMailFolder("<mailFolderId>");
+    _ = check outlookClient->addLargeFileAttachments("<Message ID>", "<Attachment Name>",
+        file = "<FilePath or Byte Array>");
 }

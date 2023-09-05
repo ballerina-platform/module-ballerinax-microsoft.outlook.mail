@@ -34,12 +34,10 @@ mail:ConnectionConfig configuration = {
 mail:Client outlookClient = check new (configuration);
 
 public function main() returns error? {
-    mail:FileAttachment attachment = {
-        contentBytes: "SGVsbG8gV29ybGQh",
-        contentType: "text/plain",
-        name: "sample.txt"
-    };
-    mail:FileAttachment fileAttachment = check outlookClient->addFileAttachment("<Message ID>", attachment, 
-        "<Folder ID>");
-    log:printInfo(fileAttachment.toString());
+    var result = check outlookClient->listAttachment("<Message ID>", "<Folder ID or Well Known Name");
+    int index = 0;
+    error? e = result.forEach(function(mail:FileAttachment queryResult) {
+        index += 1;
+    });
+    log:printInfo("Total Count of  Attachments : " + index.toString());
 }
