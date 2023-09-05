@@ -36,7 +36,7 @@ jobs:
       # Test Ballerina Project
       - name: Ballerina Test
         working-directory: ./ballerina
-        run: bal test ./ballerina --test-report --code-coverage --coverage-format=xml
+        run: bal test --test-report --code-coverage --coverage-format=xml
         env:
           JAVA_HOME: /usr/lib/jvm/default-jvm
           REFRESH_URL: ${{ secrets.REFRESH_URL }}
