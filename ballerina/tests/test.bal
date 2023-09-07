@@ -435,7 +435,7 @@ function testCreateMailSearchFolder() {
 function testAddLargeFileAttachment() returns @tainted error? {
     log:printInfo("outlookClient->TestAddLargeFileAttachments");
     stream<io:Block, io:Error?> blockStream = check 
-    io:fileReadBlocksAsStream("outlookmail/tests/sample.pdf", 3000000);
+    io:fileReadBlocksAsStream("tests/sample.pdf", 3000000);
     var output = outlookClient->addLargeFileAttachments(sentMessageId, "myFile.pdf", blockStream, fileSize = 10635049);
     if (output is error) {
         test:assertFail(msg = output.toString());
