@@ -410,7 +410,7 @@ function testDeleteMailFolder() {
 function testCreateMailSearchFolder() {
     log:printInfo("outlookClient->testCreateMailSearchFolder()");
     MailSearchFolder mailSearchFolder = {
-        displayName: "TestSearch_04",
+        displayName: "TestSearch",
         includeNestedFolders: true,
         sourceFolderIds: ["inbox"],
         filterQuery: "contains(subject, 'weekly digest')"
