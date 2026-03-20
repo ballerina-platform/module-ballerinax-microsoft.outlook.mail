@@ -1,8 +1,16 @@
 ## Overview
-Ballerina connector for Microsoft Outlook mail provides access to the Microsoft Outlook mail service in Microsoft Graph v1.0 via the 
+The connector for Microsoft Outlook mail provides access to the Microsoft Outlook mail service in Microsoft Graph v1.0 via the 
 [Ballerina language](https://ballerina.io/). It provides the capability to perform more useful functionalities provided in Microsoft outlook mail such as sending messages, listing messages, creating drafts, mail folders, deleting messages, updating messages, etc.
 
 This module supports [Microsoft Graph (Mail) API v1.0](https://docs.microsoft.com/en-us/graph/api/resources/message?view=graph-rest-1.0).
+
+
+### Key Features
+
+- Send, read, and manage email messages
+- Access mailbox folders and message attachments
+- Search and filter email messages
+- Support for mail rules and message tracking
 
 ## Prerequisites
 Before using this connector in your Ballerina application, complete the following:
