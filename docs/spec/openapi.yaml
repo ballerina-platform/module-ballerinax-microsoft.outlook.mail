@@ -1,0 +1,1954 @@
+openapi: 3.0.4
+info:
+  title: Microsoft Graph Mail API
+  description: "Reduced Microsoft Graph v1.0 OpenAPI spec covering Outlook mail operations:\
+    \ messages, mail folders, attachments, and related actions. This includes operations\
+    \ for sending, reading, organizing, and managing email messages and mail folders\
+    \ for the signed-in user."
+  version: v1.0
+servers:
+- url: https://graph.microsoft.com/v1.0
+security:
+- azureOAuth2:
+  - Mail.Read
+  - Mail.ReadWrite
+  - Mail.Send
+tags:
+- name: me.message
+  description: Operations on messages in the signed-in user's mailbox
+- name: me.mailFolder
+  description: Operations on mail folders in the signed-in user's mailbox
+- name: me.user.Actions
+  description: User-level actions such as sending mail
+paths:
+  /me/messages:
+    description: Provides operations to manage the messages property of the microsoft.graph.user
+      entity.
+    get:
+      tags:
+      - me.message
+      summary: List messages
+      description: "Get the messages in the signed-in user's mailbox (including the\
+        \ Sent Items and Deleted Items folders). By default, this operation does not\
+        \ return hidden messages. Use the includeHiddenMessages query parameter to\
+        \ include them in the response."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-list-messages?view=graph-rest-1.0
+      operationId: me.ListMessages
+      parameters:
+      - name: includeHiddenMessages
+        in: query
+        description: Include Hidden Messages
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.messageCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - me.message
+      summary: Create message (draft)
+      description: "Create a draft of a new message in either JSON or MIME format.\
+        \ When using JSON format, you can include an attachment in the same createMessage\
+        \ call. Use this to save a draft to the Drafts folder, then send it later."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-post-messages?view=graph-rest-1.0
+      operationId: me.CreateMessages
+      requestBody:
+        description: New message draft
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMessage"
+        required: true
+      responses:
+        "2XX":
+          description: Created message draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+  /me/messages/{messageId}:
+    description: Provides operations to manage the messages property of the microsoft.graph.user
+      entity.
+    get:
+      tags:
+      - me.message
+      summary: Get message
+      description: "Get the properties and relationships of a message object. You\
+        \ can use the $select parameter to get specific properties, including those\
+        \ that aren't returned by default."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-get?view=graph-rest-1.0
+      operationId: me.GetMessages
+      parameters:
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - me.message
+      summary: Delete message
+      description: "Delete a message in the specified user's mailbox, or delete a\
+        \ relationship of the message."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-delete?view=graph-rest-1.0
+      operationId: me.DeleteMessages
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    patch:
+      tags:
+      - me.message
+      summary: Update message
+      description: Update the properties of a message object. Only the properties
+        listed in the request body will be updated.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-update?view=graph-rest-1.0
+      operationId: me.UpdateMessages
+      requestBody:
+        description: New property values
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMessage"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /me/messages/{messageId}/send:
+    description: Provides operations to call the send method.
+    post:
+      tags:
+      - me.message
+      summary: Send draft message
+      description: "Send an existing draft message. The draft message can be a new\
+        \ message draft, reply draft, reply-all draft, or a forward draft. This method\
+        \ saves the message in the Sent Items folder. Alternatively, send a new message\
+        \ in a single operation. Note: This operation has no request body. Content-Length\
+        \ is set to 0 internally."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-send?view=graph-rest-1.0
+      operationId: me.messages.message.send
+      parameters:
+      - name: Content-Length
+        in: header
+        description: Must be 0 as this operation sends an empty body
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          default: 0
+        x-ballerina-name: contentLength
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /me/messages/{messageId}/copy:
+    description: Provides operations to call the copy method.
+    post:
+      tags:
+      - me.message
+      summary: Copy message
+      description: Copy a message to a folder within the user's mailbox.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-copy?view=graph-rest-1.0
+      operationId: me.messages.message.copy
+      requestBody:
+        description: Action parameters
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageIdCopyBody"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessageResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /me/messages/{messageId}/forward:
+    description: Provides operations to call the forward method.
+    post:
+      tags:
+      - me.message
+      summary: Forward message
+      description: "Forward a message using either JSON or MIME format. When using\
+        \ JSON format, you can specify either a comment or the body property of the\
+        \ message parameter. This method saves the message in the Sent Items folder."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-forward?view=graph-rest-1.0
+      operationId: me.messages.message.forward
+      requestBody:
+        description: Action parameters
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageIdForwardBody"
+        required: true
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /me/messages/{messageId}/attachments:
+    description: Provides operations to manage the attachments property of the microsoft.graph.message
+      entity.
+    get:
+      tags:
+      - me.message
+      summary: List attachments
+      description: Retrieve a list of attachment objects attached to a message.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-list-attachments?view=graph-rest-1.0
+      operationId: me.messages.ListAttachments
+      parameters:
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.attachmentCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - me.message
+      summary: Add file attachment
+      description: "Use this API to add a file attachment to a message. An attachment\
+        \ can be one of the following types: fileAttachment, itemAttachment, or referenceAttachment.\
+        \ All these types of attachment resources are derived from the attachment\
+        \ resource. For file attachments smaller than 3 MB, use this endpoint. For\
+        \ larger files, use the createUploadSession endpoint."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-post-attachments?view=graph-rest-1.0
+      operationId: me.messages.CreateAttachments
+      requestBody:
+        description: New attachment
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphAttachment"
+        required: true
+      responses:
+        "2XX":
+          description: Created attachment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphAttachment"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /me/messages/{messageId}/attachments/{attachmentId}:
+    description: Provides operations to manage the attachments property of the microsoft.graph.message
+      entity.
+    get:
+      tags:
+      - me.message
+      summary: Get attachment
+      description: "Read the properties, relationships, or raw contents of an attachment\
+        \ attached to a user message. An attachment can be one of the following types:\
+        \ fileAttachment, itemAttachment, or referenceAttachment."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/attachment-get?view=graph-rest-1.0
+      operationId: me.messages.GetAttachments
+      parameters:
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved attachment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphAttachment"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - me.message
+      summary: Delete attachment
+      description: Delete an attachment from a user message.
+      operationId: me.messages.DeleteAttachments
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+    - name: attachmentId
+      in: path
+      description: The unique identifier of attachment
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: attachment
+  /me/messages/{messageId}/attachments/createUploadSession:
+    description: Provides operations to call the createUploadSession method.
+    post:
+      tags:
+      - me.message
+      summary: Create large file attachment upload session
+      description: "Create an upload session that allows an app to iteratively upload\
+        \ ranges of a file, so as to attach the file to the specified message. Use\
+        \ this approach to attach a file if the file size is between 3 MB and 150\
+        \ MB. To attach a file smaller than 3 MB, do a POST on the attachments navigation\
+        \ property instead. As part of the response, this action returns an upload\
+        \ URL that you can use in subsequent sequential PUT queries."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/attachment-createuploadsession?view=graph-rest-1.0
+      operationId: me.messages.message.attachments.createUploadSession
+      requestBody:
+        description: Action parameters
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachmentsCreateUploadSessionBody"
+        required: true
+      responses:
+        "2XX":
+          description: Success - returns an upload session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphUploadSessionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /me/sendMail:
+    description: Provides operations to call the sendMail method.
+    post:
+      tags:
+      - me.user.Actions
+      summary: Send mail
+      description: "Send the message specified in the request body using either JSON\
+        \ or MIME format. When using JSON format, you can include a file attachment\
+        \ in the same sendMail action call. This method saves the message in the Sent\
+        \ Items folder."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-sendmail?view=graph-rest-1.0
+      operationId: me.sendMail
+      requestBody:
+        $ref: "#/components/requestBodies/sendMailRequestBody"
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+  /me/mailFolders:
+    description: Provides operations to manage the mailFolders property of the microsoft.graph.user
+      entity.
+    get:
+      tags:
+      - me.mailFolder
+      summary: List mailFolders
+      description: "Get the mail folder collection directly under the root folder\
+        \ of the signed-in user. The returned collection includes any mail search\
+        \ folders directly under the root. By default, this operation does not return\
+        \ hidden folders. Use the includeHiddenFolders query parameter to include\
+        \ them in the response."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-list-mailfolders?view=graph-rest-1.0
+      operationId: me.ListMailFolders
+      parameters:
+      - name: includeHiddenFolders
+        in: query
+        description: Include Hidden Folders
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.mailFolderCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - me.mailFolder
+      summary: Create mailFolder
+      description: "Use this API to create a new mail folder in the root folder of\
+        \ the user's mailbox. If you intend a new folder to be hidden, you must set\
+        \ the isHidden property to true on creation. To create a mail search folder,\
+        \ set the '@odata.type' property to '#microsoft.graph.mailSearchFolder' and\
+        \ include the filterQuery and sourceFolderIds properties."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-post-mailfolders?view=graph-rest-1.0
+      operationId: me.CreateMailFolders
+      requestBody:
+        description: "New mail folder (use '@odata.type': '#microsoft.graph.mailSearchFolder'\
+          \ to create a search folder)"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Created mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+  /me/mailFolders/{mailFolderId}:
+    description: Provides operations to manage the mailFolders property of the microsoft.graph.user
+      entity.
+    get:
+      tags:
+      - me.mailFolder
+      summary: Get mailFolder
+      description: "Retrieve the properties and relationships of a mail folder object.\
+        \ You can specify a mail folder by its folder ID, or by its well-known folder\
+        \ name, if one exists."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-get?view=graph-rest-1.0
+      operationId: me.GetMailFolders
+      parameters:
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - me.mailFolder
+      summary: Delete mailFolder
+      description: "Delete the specified mailFolder. The folder can be a mailSearchFolder.\
+        \ You can specify a mail folder by its folder ID, or by its well-known folder\
+        \ name, if one exists."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-delete?view=graph-rest-1.0
+      operationId: me.DeleteMailFolders
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    patch:
+      tags:
+      - me.mailFolder
+      summary: Update mailFolder
+      description: Update the writable properties of a mailFolder object.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-update?view=graph-rest-1.0
+      operationId: me.UpdateMailFolders
+      requestBody:
+        description: New property values
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: mailFolderId
+      in: path
+      description: The unique identifier of mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
+  /me/mailFolders/{mailFolderId}/childFolders:
+    description: Provides operations to manage the childFolders property of the microsoft.graph.mailFolder
+      entity.
+    get:
+      tags:
+      - me.mailFolder
+      summary: List childFolders
+      description: "Get the folder collection under the specified folder. You can\
+        \ use the .../me/mailFolders shortcut to get the top-level folder collection\
+        \ and navigate to another folder. By default, this operation does not return\
+        \ hidden folders. Use the includeHiddenFolders query parameter to include\
+        \ them."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-list-childfolders?view=graph-rest-1.0
+      operationId: me.mailFolders.ListChildFolders
+      parameters:
+      - name: includeHiddenFolders
+        in: query
+        description: Include Hidden Folders
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.mailFolderCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - me.mailFolder
+      summary: Create child folder
+      description: "Use this API to create a new child mailFolder. If you intend a\
+        \ new folder to be hidden, you must set the isHidden property to true on creation.\
+        \ To create a mail search folder as a child, set the '@odata.type' property\
+        \ to '#microsoft.graph.mailSearchFolder'."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-post-childfolders?view=graph-rest-1.0
+      operationId: me.mailFolders.CreateChildFolders
+      requestBody:
+        description: New child mail folder
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Created child mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: mailFolderId
+      in: path
+      description: The unique identifier of mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
+  /me/mailFolders/{mailFolderId}/childFolders/{mailFolderId1}:
+    description: Provides operations to manage the childFolders property of the microsoft.graph.mailFolder
+      entity.
+    get:
+      tags:
+      - me.mailFolder
+      summary: Get child folder
+      description: Retrieve the properties and relationships of a child mailFolder
+        object.
+      operationId: me.mailFolders.GetChildFolders
+      parameters:
+      - name: includeHiddenFolders
+        in: query
+        description: Include Hidden Folders
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved child mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - me.mailFolder
+      summary: Delete child folder
+      operationId: me.mailFolders.DeleteChildFolders
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    patch:
+      tags:
+      - me.mailFolder
+      summary: Update child folder
+      operationId: me.mailFolders.UpdateChildFolders
+      requestBody:
+        description: New property values
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: mailFolderId
+      in: path
+      description: The unique identifier of mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
+    - name: mailFolderId1
+      in: path
+      description: The unique identifier of child mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
+components:
+  schemas:
+    ODataCountResponse:
+      type: integer
+      format: int32
+    AttachmentsCreateUploadSessionBody:
+      type: object
+      properties:
+        AttachmentItem:
+          allOf:
+          - $ref: "#/components/schemas/MicrosoftGraphAttachmentItem"
+          x-ballerina-name: attachmentItem
+    MicrosoftGraphODataErrorsMainError:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: "#/components/schemas/MicrosoftGraphODataErrorsErrorDetails"
+        innerError:
+          $ref: "#/components/schemas/MicrosoftGraphODataErrorsInnerError"
+        message:
+          type: string
+          x-ms-primary-error-message: true
+        target:
+          type: string
+          nullable: true
+    MicrosoftGraphFollowupFlagStatus:
+      title: followupFlagStatus
+      type: string
+      enum:
+      - notFlagged
+      - complete
+      - flagged
+    MicrosoftGraphEntity:
+      title: entity
+      type: object
+      properties:
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        id:
+          type: string
+          description: The unique identifier for an entity. Read-only
+      discriminator:
+        propertyName: '@odata.type'
+        mapping:
+          '#microsoft.graph.attachment': "#/components/schemas/microsoft.graph.attachment"
+          '#microsoft.graph.fileAttachment': "#/components/schemas/microsoft.graph.fileAttachment"
+          '#microsoft.graph.mailFolder': "#/components/schemas/microsoft.graph.mailFolder"
+          '#microsoft.graph.mailSearchFolder': "#/components/schemas/microsoft.graph.mailSearchFolder"
+          '#microsoft.graph.message': "#/components/schemas/microsoft.graph.message"
+          '#microsoft.graph.outlookItem': "#/components/schemas/microsoft.graph.outlookItem"
+    MicrosoftGraphMessageResponse:
+      anyOf:
+      - $ref: "#/components/schemas/MicrosoftGraphMessage"
+      - $ref: "#/components/schemas/CompletedResponse"
+    MicrosoftGraphMessage:
+      allOf:
+      - $ref: "#/components/schemas/MicrosoftGraphOutlookItem"
+      - title: message
+        type: object
+        properties:
+          flag:
+            description: "Indicates the status, start date, due date, or completion\
+              \ date for the message"
+            anyOf:
+            - $ref: "#/components/schemas/MicrosoftGraphFollowupFlag"
+            - type: object
+              nullable: true
+          attachments:
+            type: array
+            description: The fileAttachment and itemAttachment attachments for the
+              message
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphAttachment"
+            x-ms-navigationProperty: true
+          parentFolderId:
+            type: string
+            description: The unique identifier for the message's parent mailFolder
+            nullable: true
+          importance:
+            description: "The importance of the message. The possible values are:\
+              \ low, normal, and high"
+            anyOf:
+            - $ref: "#/components/schemas/MicrosoftGraphImportance"
+            - type: object
+              nullable: true
+          subject:
+            type: string
+            description: The subject of the message
+            nullable: true
+          webLink:
+            type: string
+            description: The URL to open the message in Outlook on the web
+            nullable: true
+          '@odata.type':
+            type: string
+            default: "#microsoft.graph.message"
+            x-ballerina-name: atOdataType
+          isDraft:
+            type: boolean
+            description: Indicates whether the message is a draft. A message is a
+              draft if it hasn't been sent yet
+            nullable: true
+          isRead:
+            type: boolean
+            description: Indicates whether the message has been read
+            nullable: true
+          bodyPreview:
+            type: string
+            description: The first 255 characters of the message body. It is in text
+              format
+            nullable: true
+          body:
+            description: The body of the message. It can be in HTML or text format.
+              Find out about safe HTML in a message body
+            anyOf:
+            - $ref: "#/components/schemas/MicrosoftGraphItemBody"
+            - type: object
+              nullable: true
+          inferenceClassification:
+            description: "The classification of the message for the user, based on\
+              \ inferred relevance or importance, or on an explicit override"
+            anyOf:
+            - $ref: "#/components/schemas/MicrosoftGraphInferenceClassificationType"
+            - type: object
+              nullable: true
+          internetMessageId:
+            type: string
+            description: The message ID in the format specified by RFC2822
+            nullable: true
+          toRecipients:
+            type: array
+            description: "The To: recipients for the message"
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphRecipient"
+          isReadReceiptRequested:
+            type: boolean
+            description: Indicates whether a read receipt is requested for the message
+            nullable: true
+          from:
+            description: "The owner of the mailbox from which the message is sent.\
+              \ In most cases, this value is the same as the sender property, except\
+              \ for sharing or delegation scenarios"
+            anyOf:
+            - $ref: "#/components/schemas/MicrosoftGraphRecipient"
+            - type: object
+              nullable: true
+          uniqueBody:
+            description: The part of the body of the message that is unique to the
+              current message. uniqueBody is not returned by default but can be retrieved
+              with $select=uniqueBody
+            anyOf:
+            - $ref: "#/components/schemas/MicrosoftGraphItemBody"
+            - type: object
+              nullable: true
+          hasAttachments:
+            type: boolean
+            description: "Indicates whether the message has attachments. This property\
+              \ doesn't include inline attachments, so if a message contains only\
+              \ inline attachments, this property is false"
+            nullable: true
+          sentDateTime:
+            pattern: "^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$"
+            type: string
+            description: The date and time the message was sent. The date and time
+              information uses ISO 8601 format and is always in UTC time
+            format: date-time
+            nullable: true
+          conversationIndex:
+            type: string
+            description: Indicates the position of the message within the conversation
+            format: base64url
+            nullable: true
+          conversationId:
+            type: string
+            description: The ID of the conversation the email belongs to
+            nullable: true
+          internetMessageHeaders:
+            type: array
+            description: A collection of message headers defined by RFC5322. The set
+              includes message headers indicating the network path taken by a message
+              from the sender to the recipient
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphInternetMessageHeader"
+          receivedDateTime:
+            pattern: "^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$"
+            type: string
+            description: The date and time the message was received. The date and
+              time information uses ISO 8601 format and is always in UTC time
+            format: date-time
+            nullable: true
+          extensions:
+            type: array
+            description: The collection of open extensions defined for the message.
+              Nullable
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphExtension"
+            x-ms-navigationProperty: true
+          sender:
+            description: "The account that is used to generate the message. In most\
+              \ cases, this value is the same as the from property"
+            anyOf:
+            - $ref: "#/components/schemas/MicrosoftGraphRecipient"
+            - type: object
+              nullable: true
+          bccRecipients:
+            type: array
+            description: "The Bcc: recipients for the message"
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphRecipient"
+          ccRecipients:
+            type: array
+            description: "The Cc: recipients for the message"
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphRecipient"
+          isDeliveryReceiptRequested:
+            type: boolean
+            description: Indicates whether a read receipt is requested for the message
+            nullable: true
+          replyTo:
+            type: array
+            description: The email addresses to use when replying
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphRecipient"
+        discriminator:
+          propertyName: '@odata.type'
+          mapping:
+            '#microsoft.graph.eventMessage': "#/components/schemas/microsoft.graph.message"
+    MicrosoftGraphMailFolder:
+      allOf:
+      - $ref: "#/components/schemas/MicrosoftGraphEntity"
+      - title: mailFolder
+        type: object
+        properties:
+          childFolderCount:
+            maximum: 2147483647
+            minimum: -2147483648
+            type: number
+            description: The number of immediate child mailFolders in the current
+              mailFolder
+            format: int32
+            nullable: true
+          parentFolderId:
+            type: string
+            description: The unique identifier for the mailFolder's parent mailFolder
+            nullable: true
+          displayName:
+            type: string
+            description: The mailFolder's display name
+            nullable: true
+          '@odata.type':
+            type: string
+            x-ballerina-name: atOdataType
+          childFolders:
+            type: array
+            description: The collection of child folders in the mailFolder
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+            x-ms-navigationProperty: true
+          messages:
+            type: array
+            description: The collection of messages in the mailFolder
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphMessage"
+            x-ms-navigationProperty: true
+          unreadItemCount:
+            maximum: 2147483647
+            minimum: -2147483648
+            type: number
+            description: The number of items in the mailFolder marked as unread
+            format: int32
+            nullable: true
+          isHidden:
+            type: boolean
+            description: Indicates whether the mailFolder is hidden. This property
+              can be set only when creating the folder
+            nullable: true
+          totalItemCount:
+            maximum: 2147483647
+            minimum: -2147483648
+            type: number
+            description: The number of items in the mailFolder
+            format: int32
+            nullable: true
+        discriminator:
+          propertyName: '@odata.type'
+          mapping:
+            '#microsoft.graph.mailSearchFolder': "#/components/schemas/microsoft.graph.mailSearchFolder"
+    MicrosoftGraphMessageCollectionResponse:
+      title: Collection of message
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/BaseCollectionPaginationCountResponse"
+      - type: object
+        properties:
+          value:
+            type: array
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphMessage"
+    MicrosoftGraphAttachmentType:
+      title: attachmentType
+      type: string
+      enum:
+      - file
+      - item
+      - reference
+    MicrosoftGraphMailFolderCollectionResponse:
+      title: Collection of mailFolder
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/BaseCollectionPaginationCountResponse"
+      - type: object
+        properties:
+          value:
+            type: array
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+    MicrosoftGraphInternetMessageHeader:
+      title: internetMessageHeader
+      type: object
+      properties:
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        name:
+          type: string
+          description: Represents the key in a key-value pair
+          nullable: true
+        value:
+          type: string
+          description: The value in a key-value pair
+          nullable: true
+    MicrosoftGraphEmailAddress:
+      title: emailAddress
+      type: object
+      properties:
+        address:
+          type: string
+          description: The email address of the person or entity
+          nullable: true
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        name:
+          type: string
+          description: The display name of the person or entity
+          nullable: true
+    UploadSessionCompletedResponse:
+      type: object
+      nullable: true
+    MicrosoftGraphOutlookItem:
+      allOf:
+      - $ref: "#/components/schemas/MicrosoftGraphEntity"
+      - title: outlookItem
+        type: object
+        properties:
+          changeKey:
+            type: string
+            description: "Identifies the version of the item. Every time the item\
+              \ is changed, changeKey changes as well. This allows Exchange to apply\
+              \ changes to the correct version of the object. Read-only"
+            nullable: true
+          lastModifiedDateTime:
+            pattern: "^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$"
+            type: string
+            description: "The Timestamp type represents date and time information\
+              \ using ISO 8601 format and is always in UTC time. For example, midnight\
+              \ UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z"
+            format: date-time
+            nullable: true
+          '@odata.type':
+            type: string
+            x-ballerina-name: atOdataType
+          createdDateTime:
+            pattern: "^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$"
+            type: string
+            description: "The Timestamp type represents date and time information\
+              \ using ISO 8601 format and is always in UTC time. For example, midnight\
+              \ UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z"
+            format: date-time
+            nullable: true
+          categories:
+            type: array
+            description: The categories associated with the item
+            items:
+              type: string
+              nullable: true
+        discriminator:
+          propertyName: '@odata.type'
+          mapping:
+            '#microsoft.graph.message': "#/components/schemas/microsoft.graph.message"
+    MicrosoftGraphRecipient:
+      title: recipient
+      type: object
+      properties:
+        emailAddress:
+          description: The recipient's email address
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphEmailAddress"
+          - type: object
+            nullable: true
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+    MicrosoftGraphDateTimeTimeZone:
+      title: dateTimeTimeZone
+      type: object
+      properties:
+        dateTime:
+          type: string
+          description: "A single point of time in a combined date and time representation\
+            \ ({date}T{time}; for example, 2017-08-29T04:00:00.0000000)"
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        timeZone:
+          type: string
+          description: "Represents a time zone, for example, 'Pacific Standard Time'.\
+            \ See below for more possible values"
+          nullable: true
+    MicrosoftGraphODataErrorsInnerError:
+      title: InnerError
+      type: object
+      properties:
+        date:
+          pattern: "^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$"
+          type: string
+          description: Date when the error occurred
+          format: date-time
+          nullable: true
+        client-request-id:
+          type: string
+          description: Client request Id as sent by the client application
+          nullable: true
+          x-ballerina-name: clientRequestId
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        request-id:
+          type: string
+          description: Request Id as tracked internally by the service
+          nullable: true
+          x-ballerina-name: requestId
+    MicrosoftGraphAttachmentCollectionResponse:
+      title: Collection of attachment
+      type: object
+      allOf:
+      - $ref: "#/components/schemas/BaseCollectionPaginationCountResponse"
+      - type: object
+        properties:
+          value:
+            type: array
+            items:
+              $ref: "#/components/schemas/MicrosoftGraphAttachment"
+    MicrosoftGraphItemBody:
+      title: itemBody
+      type: object
+      properties:
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        contentType:
+          description: The type of the content. Possible values are text and html
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphBodyType"
+          - type: object
+            nullable: true
+        content:
+          type: string
+          description: The content of the item
+          nullable: true
+    BaseCollectionPaginationCountResponse:
+      title: Base collection pagination and count responses
+      type: object
+      properties:
+        '@odata.nextLink':
+          type: string
+          nullable: true
+          x-ballerina-name: atOdataNextLink
+        '@odata.count':
+          type: integer
+          format: int64
+          nullable: true
+          x-ballerina-name: atOdataCount
+    MicrosoftGraphExtension:
+      allOf:
+      - $ref: "#/components/schemas/MicrosoftGraphEntity"
+      - title: extension
+        type: object
+        properties:
+          '@odata.type':
+            type: string
+            x-ballerina-name: atOdataType
+    MicrosoftGraphODataErrorsODataError:
+      required:
+      - error
+      type: object
+      properties:
+        error:
+          $ref: "#/components/schemas/MicrosoftGraphODataErrorsMainError"
+    CompletedResponse:
+      type: object
+      nullable: true
+    MicrosoftGraphAttachmentItem:
+      title: attachmentItem
+      type: object
+      properties:
+        size:
+          type: number
+          description: The length of the attachment in bytes. Required
+          format: int64
+          nullable: true
+        attachmentType:
+          description: "The type of attachment. The possible values are: file, item,\
+            \ reference. Required"
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphAttachmentType"
+          - type: object
+            nullable: true
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        contentId:
+          type: string
+          description: The CID or Content-Id of the attachment for referencing for
+            the in-line attachments using the <img src='cid:contentId'> tag in HTML
+            messages. Optional
+          nullable: true
+        name:
+          type: string
+          description: The display name of the attachment. This can be a descriptive
+            string and doesn't have to be the actual file name. Required
+          nullable: true
+        isInline:
+          type: boolean
+          description: "true if the attachment is an inline attachment; otherwise,\
+            \ false. Optional"
+          nullable: true
+        contentType:
+          type: string
+          description: The nature of the data in the attachment. Optional
+          nullable: true
+    MicrosoftGraphAttachment:
+      allOf:
+      - $ref: "#/components/schemas/MicrosoftGraphEntity"
+      - title: attachment
+        type: object
+        properties:
+          lastModifiedDateTime:
+            pattern: "^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$"
+            type: string
+            description: "The Timestamp type represents date and time information\
+              \ using ISO 8601 format and is always in UTC time. For example, midnight\
+              \ UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z"
+            format: date-time
+            nullable: true
+          size:
+            maximum: 2147483647
+            minimum: -2147483648
+            type: number
+            description: The length of the attachment in bytes
+            format: int32
+          '@odata.type':
+            type: string
+            x-ballerina-name: atOdataType
+          name:
+            type: string
+            description: The attachment's file name
+            nullable: true
+          isInline:
+            type: boolean
+            description: "true if the attachment is an inline attachment; otherwise,\
+              \ false"
+          contentType:
+            type: string
+            description: The MIME type
+            nullable: true
+        discriminator:
+          propertyName: '@odata.type'
+          mapping:
+            '#microsoft.graph.fileAttachment': "#/components/schemas/microsoft.graph.fileAttachment"
+            '#microsoft.graph.itemAttachment': "#/components/schemas/microsoft.graph.attachment"
+            '#microsoft.graph.referenceAttachment': "#/components/schemas/microsoft.graph.attachment"
+    MicrosoftGraphInferenceClassificationType:
+      title: inferenceClassificationType
+      type: string
+      enum:
+      - focused
+      - other
+    MicrosoftGraphUploadSessionResponse:
+      anyOf:
+      - $ref: "#/components/schemas/MicrosoftGraphUploadSession"
+      - $ref: "#/components/schemas/UploadSessionCompletedResponse"
+    MicrosoftGraphUploadSession:
+      title: uploadSession
+      type: object
+      properties:
+        expirationDateTime:
+          pattern: "^[0-9]{4,}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]([.][0-9]{1,12})?(Z|[+-][0-9][0-9]:[0-9][0-9])$"
+          type: string
+          description: The date and time in UTC that the upload session expires. The
+            complete file must be uploaded before this expiration time is reached.
+            Each fragment uploaded during the session extends the expiration time
+          format: date-time
+          nullable: true
+        uploadUrl:
+          type: string
+          description: The URL endpoint that accepts PUT requests for byte ranges
+            of the file
+          nullable: true
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        nextExpectedRanges:
+          type: array
+          description: "A collection of byte ranges that the server is missing for\
+            \ the file. These ranges are zero indexed and of the format 'start-end'\
+            \ (e.g., '0-26' to indicate the first 27 bytes of the file). When uploading\
+            \ files as Outlook attachments, instead of a collection of ranges, this\
+            \ property always indicates a single value '{start}', the location in\
+            \ the file where the next upload should begin"
+          items:
+            type: string
+            nullable: true
+    MicrosoftGraphBodyType:
+      title: bodyType
+      type: string
+      enum:
+      - text
+      - html
+    MicrosoftGraphFollowupFlag:
+      title: followupFlag
+      type: object
+      properties:
+        startDateTime:
+          description: The date and time that the follow-up is to begin
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphDateTimeTimeZone"
+          - type: object
+            nullable: true
+        dueDateTime:
+          description: "The date and time that the follow-up is to be finished. Note:\
+            \ To set the due date, you must also specify the startDateTime; otherwise,\
+            \ you get a 400 Bad Request response"
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphDateTimeTimeZone"
+          - type: object
+            nullable: true
+        flagStatus:
+          description: "The status for follow-up for an item. Possible values are\
+            \ notFlagged, complete, and flagged"
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphFollowupFlagStatus"
+          - type: object
+            nullable: true
+        '@odata.type':
+          type: string
+          x-ballerina-name: atOdataType
+        completedDateTime:
+          description: The date and time that the follow-up was finished
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphDateTimeTimeZone"
+          - type: object
+            nullable: true
+    MessageIdForwardBody:
+      type: object
+      properties:
+        Comment:
+          type: string
+          description: A comment to include when forwarding the message. Can be an
+            empty string
+          nullable: true
+          x-ballerina-name: comment
+        Message:
+          description: A writeable message object to add content or modify recipients
+            when forwarding the message
+          anyOf:
+          - $ref: "#/components/schemas/MicrosoftGraphMessage"
+          - type: object
+            nullable: true
+          x-ballerina-name: message
+        ToRecipients:
+          type: array
+          description: The list of recipients of the forwarded message
+          items:
+            $ref: "#/components/schemas/MicrosoftGraphRecipient"
+          x-ballerina-name: toRecipients
+    MicrosoftGraphODataErrorsErrorDetails:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        target:
+          type: string
+          nullable: true
+    MicrosoftGraphImportance:
+      title: importance
+      type: string
+      enum:
+      - low
+      - normal
+      - high
+    MessageIdCopyBody:
+      type: object
+      properties:
+        DestinationId:
+          type: string
+          description: The destination folder ID or well-known folder name
+          x-ballerina-name: destinationId
+  responses:
+    error:
+      description: error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MicrosoftGraphODataErrorsODataError"
+    ODataCountResponse:
+      description: The count of the resource
+      content:
+        text/plain:
+          schema:
+            $ref: "#/components/schemas/ODataCountResponse"
+    microsoft.graph.messageCollectionResponse:
+      description: Retrieved collection
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MicrosoftGraphMessageCollectionResponse"
+    microsoft.graph.mailFolderCollectionResponse:
+      description: Retrieved collection
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MicrosoftGraphMailFolderCollectionResponse"
+    microsoft.graph.attachmentCollectionResponse:
+      description: Retrieved collection
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MicrosoftGraphAttachmentCollectionResponse"
+  parameters:
+    top:
+      name: $top
+      in: query
+      description: Show only the first n items
+      required: false
+      style: form
+      explode: false
+      schema:
+        minimum: 0
+        type: integer
+      example: 50
+      x-ballerina-name: dollarTop
+    skip:
+      name: $skip
+      in: query
+      description: Skip the first n items
+      required: false
+      style: form
+      explode: false
+      schema:
+        minimum: 0
+        type: integer
+      x-ballerina-name: dollarSkip
+    count:
+      name: $count
+      in: query
+      description: Include count of items
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: boolean
+      x-ballerina-name: dollarCount
+    filter:
+      name: $filter
+      in: query
+      description: Filter items by property values
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+      x-ballerina-name: dollarFilter
+    search:
+      name: $search
+      in: query
+      description: Search items by search phrases
+      required: false
+      style: form
+      explode: false
+      schema:
+        type: string
+      x-ballerina-name: dollarSearch
+  requestBodies:
+    sendMailRequestBody:
+      description: Action parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              Message:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+              SaveToSentItems:
+                type: boolean
+                description: Indicates whether to save the message in Sent Items.
+                  Default is true.
+                nullable: true
+                default: false
+      required: true
+  securitySchemes:
+    azureOAuth2:
+      type: oauth2
+      description: OAuth 2.0 authorization using Azure Active Directory (Microsoft
+        Entra ID). Supports delegated permissions for accessing mail resources on
+        behalf of the signed-in user.
+      flows:
+        clientCredentials:
+          tokenUrl: https://login.microsoftonline.com/common/oauth2/v2.0/token
+          scopes:
+            Mail.Read: Read access to all users' mail (application permission)
+            Mail.ReadBasic: Read basic mail metadata (application permission)
+            Mail.ReadWrite: Read and write access to all users' mail (application
+              permission)
+            Mail.Send: Send mail as any user (application permission)
+        authorizationCode:
+          authorizationUrl: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+          tokenUrl: https://login.microsoftonline.com/common/oauth2/v2.0/token
+          scopes:
+            Mail.Read: Read access to user mail
+            Mail.ReadBasic: Read basic user mail metadata
+            Mail.ReadWrite: Read and write access to user mail
+            Mail.Send: Send mail on behalf of the user
+            MailboxSettings.Read: Read user mailbox settings
+            MailboxSettings.ReadWrite: Read and write user mailbox settings
