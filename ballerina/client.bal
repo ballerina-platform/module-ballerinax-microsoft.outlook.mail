@@ -208,7 +208,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
     # + return - Success 
-    resource isolated function post me/sendMail(record {MicrosoftGraphMessage Message?; boolean? SaveToSentItems = false;} payload, map<string|string[]> headers = {}) returns error? {
+    resource isolated function post me/sendMail(record {MicrosoftGraphMessage Message?; boolean? SaveToSentItems = true;} payload, map<string|string[]> headers = {}) returns error? {
         string resourcePath = string `/me/sendMail`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
