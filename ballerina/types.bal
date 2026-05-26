@@ -40,7 +40,7 @@ public type MeMailFoldersGetChildFoldersQueries record {
     @http:Query {name: "$expand"}
     string[] dollarExpand?;
     # Include Hidden Folders
-    string includeHiddenFolders?;
+    boolean includeHiddenFolders?;
     # Select properties to be returned
     @http:Query {name: "$select"}
     string[] dollarSelect?;
@@ -150,7 +150,7 @@ public type MeListMessagesQueries record {
     @http:Query {name: "$skip"}
     int dollarSkip?;
     # Include Hidden Messages
-    string includeHiddenMessages?;
+    boolean includeHiddenMessages?;
     # Show only the first n items
     @http:Query {name: "$top"}
     int dollarTop?;
@@ -197,7 +197,7 @@ public type MeListMailFoldersQueries record {
     @http:Query {name: "$expand"}
     string[] dollarExpand?;
     # Include Hidden Folders
-    string includeHiddenFolders?;
+    boolean includeHiddenFolders?;
     # Include count of items
     @http:Query {name: "$count"}
     boolean dollarCount?;
@@ -482,7 +482,7 @@ public type MeMailFoldersListChildFoldersQueries record {
     @http:Query {name: "$expand"}
     string[] dollarExpand?;
     # Include Hidden Folders
-    string includeHiddenFolders?;
+    boolean includeHiddenFolders?;
     # Include count of items
     @http:Query {name: "$count"}
     boolean dollarCount?;

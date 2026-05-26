@@ -269,7 +269,7 @@ isolated function testCreateMailFolder() returns error? {
 @test:Config {dependsOn: [testCreateMailFolder], groups: ["live_test", "mock_test"]}
 isolated function testListMailFolders() returns error? {
     MicrosoftGraphMailFolderCollectionResponse response = check outlookClient->/me/mailFolders(
-        includeHiddenFolders = "true");
+        includeHiddenFolders = true);
     MicrosoftGraphMailFolder[] allFolders = response.value ?: [];
     test:assertTrue(allFolders.length() > 0, "Mail folder list should not be empty");
 }
@@ -307,7 +307,7 @@ isolated function testListChildMailFolders() returns error? {
         folderId = mailFolderId;
     }
     MicrosoftGraphMailFolderCollectionResponse _ = check outlookClient->/me/mailFolders/[folderId]/childFolders(
-        includeHiddenFolders = "true");
+        includeHiddenFolders = true);
 }
 
 @test:Config {dependsOn: [testListChildMailFolders], groups: ["live_test", "mock_test"]}

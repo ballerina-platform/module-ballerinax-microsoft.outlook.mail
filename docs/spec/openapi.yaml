@@ -44,7 +44,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: string
+          type: boolean
       - $ref: "#/components/parameters/top"
       - $ref: "#/components/parameters/skip"
       - $ref: "#/components/parameters/search"
@@ -661,7 +661,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: string
+          type: boolean
       - $ref: "#/components/parameters/top"
       - $ref: "#/components/parameters/skip"
       - $ref: "#/components/parameters/search"
@@ -889,7 +889,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: string
+          type: boolean
       - $ref: "#/components/parameters/top"
       - $ref: "#/components/parameters/skip"
       - $ref: "#/components/parameters/search"
@@ -1001,7 +1001,7 @@ paths:
         style: form
         explode: true
         schema:
-          type: string
+          type: boolean
       - name: $select
         in: query
         description: Select properties to be returned
