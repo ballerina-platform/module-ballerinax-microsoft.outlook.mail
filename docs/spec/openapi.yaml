@@ -1156,12 +1156,12 @@ components:
       discriminator:
         propertyName: '@odata.type'
         mapping:
-          '#microsoft.graph.attachment': "#/components/schemas/microsoft.graph.attachment"
-          '#microsoft.graph.fileAttachment': "#/components/schemas/microsoft.graph.fileAttachment"
-          '#microsoft.graph.mailFolder': "#/components/schemas/microsoft.graph.mailFolder"
-          '#microsoft.graph.mailSearchFolder': "#/components/schemas/microsoft.graph.mailSearchFolder"
-          '#microsoft.graph.message': "#/components/schemas/microsoft.graph.message"
-          '#microsoft.graph.outlookItem': "#/components/schemas/microsoft.graph.outlookItem"
+          '#microsoft.graph.attachment': "#/components/schemas/MicrosoftGraphAttachment"
+          '#microsoft.graph.fileAttachment': "#/components/schemas/MicrosoftGraphAttachment"
+          '#microsoft.graph.mailFolder': "#/components/schemas/MicrosoftGraphMailFolder"
+          '#microsoft.graph.mailSearchFolder': "#/components/schemas/MicrosoftGraphMailFolder"
+          '#microsoft.graph.message': "#/components/schemas/MicrosoftGraphMessage"
+          '#microsoft.graph.outlookItem': "#/components/schemas/MicrosoftGraphOutlookItem"
     MicrosoftGraphMessageResponse:
       anyOf:
       - $ref: "#/components/schemas/MicrosoftGraphMessage"
@@ -1338,7 +1338,7 @@ components:
         discriminator:
           propertyName: '@odata.type'
           mapping:
-            '#microsoft.graph.eventMessage': "#/components/schemas/microsoft.graph.message"
+            '#microsoft.graph.eventMessage': "#/components/schemas/MicrosoftGraphMessage"
     MicrosoftGraphMailFolder:
       allOf:
       - $ref: "#/components/schemas/MicrosoftGraphEntity"
@@ -1398,7 +1398,7 @@ components:
         discriminator:
           propertyName: '@odata.type'
           mapping:
-            '#microsoft.graph.mailSearchFolder': "#/components/schemas/microsoft.graph.mailSearchFolder"
+            '#microsoft.graph.mailSearchFolder': "#/components/schemas/MicrosoftGraphMailFolder"
     MicrosoftGraphMessageCollectionResponse:
       title: Collection of message
       type: object
@@ -1501,7 +1501,7 @@ components:
         discriminator:
           propertyName: '@odata.type'
           mapping:
-            '#microsoft.graph.message': "#/components/schemas/microsoft.graph.message"
+            '#microsoft.graph.message': "#/components/schemas/MicrosoftGraphMessage"
     MicrosoftGraphRecipient:
       title: recipient
       type: object
@@ -1691,9 +1691,9 @@ components:
         discriminator:
           propertyName: '@odata.type'
           mapping:
-            '#microsoft.graph.fileAttachment': "#/components/schemas/microsoft.graph.fileAttachment"
-            '#microsoft.graph.itemAttachment': "#/components/schemas/microsoft.graph.attachment"
-            '#microsoft.graph.referenceAttachment': "#/components/schemas/microsoft.graph.attachment"
+            '#microsoft.graph.fileAttachment': "#/components/schemas/MicrosoftGraphAttachment"
+            '#microsoft.graph.itemAttachment': "#/components/schemas/MicrosoftGraphAttachment"
+            '#microsoft.graph.referenceAttachment': "#/components/schemas/MicrosoftGraphAttachment"
     MicrosoftGraphInferenceClassificationType:
       title: inferenceClassificationType
       type: string
