@@ -22,6 +22,7 @@ int mockIdCounter = 0;
 map<MicrosoftGraphMessage> mockMessages = {};
 map<MicrosoftGraphMailFolder> mockFolders = {};
 map<MicrosoftGraphAttachment> mockAttachments = {};
+map<MicrosoftGraphMailFolder[]> mockChildFolders = {};
 
 function generateMockId() returns string {
     mockIdCounter += 1;
@@ -157,7 +158,7 @@ service / on mockEp {
     }
 
     resource function get me/mailFolders/[string mailFolderId]/childFolders() returns MicrosoftGraphMailFolderCollectionResponse {
-        return {value: []};
+        return {value: mockChildFolders[mailFolderId] ?: []};
     }
 
     resource function post me/mailFolders/[string mailFolderId]/childFolders(
@@ -165,6 +166,9 @@ service / on mockEp {
         string id = generateMockId();
         MicrosoftGraphMailFolder folder = {...payload};
         folder.id = id;
+        MicrosoftGraphMailFolder[] children = mockChildFolders[mailFolderId] ?: [];
+        children.push(folder);
+        mockChildFolders[mailFolderId] = children;
         return folder;
     }
 }

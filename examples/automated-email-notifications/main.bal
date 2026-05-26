@@ -66,7 +66,11 @@ public function main() returns error? {
         toRecipients: [recipient]
     });
 
-    string draftId = draft?.id ?: "";
+    string? draftIdOpt = draft?.id;
+    if draftIdOpt is () {
+        return error("Failed to create draft: missing message ID");
+    }
+    string draftId = draftIdOpt;
     io:println("Draft created (ID: ", draftId, ")");
 
     // Step 3: Attach a plain-text summary report to the draft.

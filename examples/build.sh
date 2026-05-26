@@ -42,12 +42,12 @@ BAL_SOURCE_DIR="$HOME/.ballerina/repositories/local/bala/ballerinax/$BAL_PACKAGE
 echo "Successfully updated the local central repositories"
 
 # Loop through example subdirectories and build/run each one
-for dir in $(find "$BAL_EXAMPLES_DIR" -type d -maxdepth 1 -mindepth 1); do
+find "$BAL_EXAMPLES_DIR" -maxdepth 1 -mindepth 1 -type d -print0 | while IFS= read -r -d '' dir; do
   # Skip the build directory
   if [[ "$dir" == *build ]]; then
     continue
   fi
-  (cd "$dir" && bal "$BAL_CMD" --offline && cd ..)
+  (cd "$dir" && bal "$BAL_CMD" --offline)
 done
 
 # Remove generated JAR files

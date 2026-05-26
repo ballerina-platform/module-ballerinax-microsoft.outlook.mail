@@ -49,7 +49,12 @@ public function main() returns error? {
     }
 
     // Step 2: Fetch full details of the first unread message for review.
-    string firstMessageId = unreadMessages[0]?.id ?: "";
+    string? firstMsgIdOpt = unreadMessages[0]?.id;
+    if firstMsgIdOpt is () {
+        io:println("First unread message has no ID, skipping.");
+        return;
+    }
+    string firstMessageId = firstMsgIdOpt;
     mail:MicrosoftGraphMessage fullMessage = check outlookClient->/me/messages/[firstMessageId].get();
     io:println("Reviewing message: ", fullMessage?.subject);
     io:println("From: ", fullMessage?.'from);
@@ -68,7 +73,12 @@ public function main() returns error? {
     io:println("Created folder: ", supportFolder?.displayName, " (ID: ", supportFolder?.id, ")");
 
     // Step 5: Retrieve the newly created folder details to confirm creation.
-    string folderId = supportFolder?.id ?: "";
+    string? folderIdOpt = supportFolder?.id;
+    if folderIdOpt is () {
+        io:println("Created folder has no ID, skipping folder details retrieval.");
+        return;
+    }
+    string folderId = folderIdOpt;
     mail:MicrosoftGraphMailFolder folderDetails = check outlookClient->/me/mailFolders/[folderId].get();
     io:println("Folder details — Name: ", folderDetails?.displayName,
         ", Total items: ", folderDetails?.totalItemCount,
@@ -77,9 +87,11 @@ public function main() returns error? {
     // Step 6: Delete resolved or spam messages to keep the inbox clean.
     // For this example, remove the second unread message if it exists.
     if unreadMessages.length() > 1 {
-        string spamMessageId = unreadMessages[1]?.id ?: "";
-        check outlookClient->/me/messages/[spamMessageId].delete();
-        io:println("Deleted message: ", unreadMessages[1]?.subject);
+        string? spamMsgIdOpt = unreadMessages[1]?.id;
+        if spamMsgIdOpt is string {
+            check outlookClient->/me/messages/[spamMsgIdOpt].delete();
+            io:println("Deleted message: ", unreadMessages[1]?.subject);
+        }
     }
 
     io:println("Inbox triage completed.");
