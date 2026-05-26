@@ -1,8 +1,4 @@
-# Ballerina Microsoft Outlook Mail Connector
-
-[![Build](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/actions/workflows/build-with-bal-test-native.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/actions/workflows/build-with-bal-test-native.yml)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerinax-microsoft.outlook.mail.svg)](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/commits/main)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+## Overview
 
 [Microsoft Outlook Mail](https://outlook.live.com/owa/) is a widely used email service from Microsoft, available as part of the Microsoft 365 suite.
 
@@ -163,16 +159,16 @@ Now, utilize the available connector operations. A sample use case is shown belo
 
 ```ballerina
 public function main() returns error? {
-   mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->/me/messages.get(
-      queries = {
-         dollarTop: 5,
-         dollarSelect: ["id", "subject", "from", "receivedDateTime", "isRead"]
-      }
-   );
-   mail:MicrosoftGraphMessage[] messages = response.value ?: [];
-   foreach mail:MicrosoftGraphMessage message in messages {
-      io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
-   }
+    mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->/me/messages.get(
+        queries = {
+            dollarTop: 5,
+            dollarSelect: ["id", "subject", "from", "receivedDateTime", "isRead"]
+        }
+    );
+    mail:MicrosoftGraphMessage[] messages = response.value ?: [];
+    foreach mail:MicrosoftGraphMessage message in messages {
+        io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
+    }
 }
 ```
 
@@ -183,85 +179,3 @@ The `microsoft.outlook.mail` connector provides practical examples illustrating 
 1. [Automated email notifications](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/tree/main/examples/automated-email-notifications): Automates weekly project status report distribution. Creates a dedicated mail folder, drafts an HTML-formatted report email with an attachment, sends the draft, and lists recent sent messages to confirm delivery.
 
 2. [Email inbox management](https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/tree/main/examples/email-inbox-management): Implements a customer support inbox triage workflow. Lists unread messages, fetches message details, marks messages as read after review, creates an organized folder for processed tickets, and deletes spam or resolved messages.
-
-## Build from the source
-
-### Prerequisites
-
-1. Download and install Java SE Development Kit (JDK) version 17. You can download it from either of the following sources:
-   - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
-   - [OpenJDK](https://adoptium.net/)
-
-   > **Note:** Set the `JAVA_HOME` environment variable to the path of the JDK installation.
-
-2. Download and install [Ballerina Swan Lake](https://ballerina.io/).
-
-3. Download and install [Docker](https://www.docker.com/get-started).
-
-### Build options
-
-Execute the commands below to build from the source.
-
-1. To build the package:
-
-   ```bash
-   ./gradlew clean build
-   ```
-
-2. To run the tests:
-
-   ```bash
-   ./gradlew clean test
-   ```
-
-3. To build the without the tests:
-
-   ```bash
-   ./gradlew clean build -x test
-   ```
-
-4. To run tests against different environments:
-
-   ```bash
-   ./gradlew clean test -Pgroups=<Comma separated groups/test cases>
-   ```
-
-5. To debug the package with a remote debugger:
-
-   ```bash
-   ./gradlew clean build -Pdebug=<port>
-   ```
-
-6. To debug with the Ballerina language:
-
-   ```bash
-   ./gradlew clean build -PbalJavaDebug=<port>
-   ```
-
-7. Publish the generated artifacts to the local Ballerina Central repository:
-
-   ```bash
-   ./gradlew clean build -PpublishToLocalCentral=true
-   ```
-
-8. Publish the generated artifacts to the Ballerina Central repository:
-
-   ```bash
-   ./gradlew clean build -PpublishToCentral=true
-   ```
-
-## Contributing to Ballerina
-
-As an open source project, Ballerina welcomes contributions from the community.
-
-For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
-
-## Code of conduct
-
-All contributors are encouraged to read the [Ballerina Code of Conduct](https://ballerina.io/code-of-conduct).
-
-## Useful links
-
-- Discuss code changes of the Ballerina project in [ballerina-dev@googlegroups.com](mailto:ballerina-dev@googlegroups.com).
-- Chat live with us via our [Discord server](https://discord.gg/ballerinalang).
-- Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.
