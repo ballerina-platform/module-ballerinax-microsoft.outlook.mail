@@ -51,13 +51,13 @@ isolated function initClient() returns Client|error {
 @test:BeforeSuite
 isolated function beforeFunc() returns error? {
     // Delete leftover test folder from any previous failed run
-    MicrosoftGraphMailFolderCollectionResponse|error folderResponse = outlookClient->/me/mailFolders(
+    MicrosoftGraphMailFolderCollectionResponse|error folderResponse = outlookClient->listMailFolders(
         dollarFilter = "displayName eq 'Test_Folder_01'");
     if folderResponse is MicrosoftGraphMailFolderCollectionResponse {
         foreach MicrosoftGraphMailFolder folder in (folderResponse.value ?: []) {
             string fid = folder.id ?: "";
             if fid != "" {
-                error? result = outlookClient->/me/mailFolders/[fid].delete();
+                error? result = outlookClient->deleteMailFolder(fid);
                 if result is error {
                     log:printError(string `Failed to delete leftover folder: ${fid}`, 'error = result);
                 }
@@ -80,7 +80,7 @@ isolated function testCreateDraft() returns error? {
         body: body,
         toRecipients: [recipient]
     };
-    MicrosoftGraphMessage output = check outlookClient->/me/messages.post(draft);
+    MicrosoftGraphMessage output = check outlookClient->createDraftMessage(draft);
     test:assertNotEquals(output?.id, (), "Created draft should have an ID");
     test:assertNotEquals(output?.id ?: "", "", "Created draft ID should not be empty");
     test:assertEquals(output?.subject, "Test Subject", "Draft subject should match what was sent");
@@ -91,7 +91,7 @@ isolated function testCreateDraft() returns error? {
 
 @test:Config {dependsOn: [testCreateDraft], groups: ["live_test", "mock_test"]}
 isolated function testListMessages() returns error? {
-    MicrosoftGraphMessageCollectionResponse response = check outlookClient->/me/messages(
+    MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
         dollarSelect = ["sender", "subject"], dollarTop = 2);
     MicrosoftGraphMessage[] allMessages = response.value ?: [];
     test:assertTrue(allMessages.length() > 0, "Message list should not be empty");
@@ -103,7 +103,7 @@ isolated function testGetMessage() returns error? {
     lock {
         draftId = createdDraftId;
     }
-    MicrosoftGraphMessage output = check outlookClient->/me/messages/[draftId](
+    MicrosoftGraphMessage output = check outlookClient->getMessage(draftId,
         dollarSelect = ["body", "subject"]);
     test:assertNotEquals(output?.id, (), "Retrieved message should have an ID");
     test:assertNotEquals(output?.body, (), "Retrieved message should have a body");
@@ -128,7 +128,7 @@ isolated function testUpdateMessage() returns error? {
         body: body,
         toRecipients: [recipient]
     };
-    MicrosoftGraphMessage output = check outlookClient->/me/messages/[draftId].patch(message);
+    MicrosoftGraphMessage output = check outlookClient->updateMessage(draftId, message);
     test:assertNotEquals(output?.id, (), "Updated message should have an ID");
     test:assertEquals(output?.subject, "Test Subject Updated", "Subject should reflect the update");
 }
@@ -139,7 +139,7 @@ isolated function testCopyMessage() returns error? {
     lock {
         draftId = createdDraftId;
     }
-    MicrosoftGraphMessageResponse copy = check outlookClient->/me/messages/[draftId]/copy.post({destinationId: "sentitems"});
+    MicrosoftGraphMessageResponse copy = check outlookClient->copyMessage(draftId, {destinationId: "sentitems"});
     if copy is MicrosoftGraphMessage {
         test:assertNotEquals(copy?.id, (), "Copied message should have an ID");
     }
@@ -153,7 +153,7 @@ isolated function testForwardMessage() returns error? {
     }
     MicrosoftGraphEmailAddress fwdEmailAddr = {atOdataType: "#microsoft.graph.emailAddress", address: recipientEmail};
     MicrosoftGraphRecipient fwdRecipient = {atOdataType: "#microsoft.graph.recipient", emailAddress: fwdEmailAddr};
-    check outlookClient->/me/messages/[draftId]/forward.post({
+    check outlookClient->forwardMessage(draftId, {
         comment: "test comment for forwarding",
         toRecipients: [fwdRecipient]
     });
@@ -165,7 +165,7 @@ isolated function testSendExistingDraftMessage() returns error? {
     lock {
         draftId = createdDraftId;
     }
-    check outlookClient->/me/messages/[draftId]/send.post();
+    check outlookClient->sendDraftMessage(draftId);
 }
 
 @test:Config {dependsOn: [testSendExistingDraftMessage], groups: ["live_test", "mock_test"]}
@@ -187,7 +187,7 @@ isolated function testSendMessage() returns error? {
         toRecipients: [recipient],
         attachments: [attachment1, attachment2]
     };
-    check outlookClient->/me/sendMail.post({Message: message, SaveToSentItems: true});
+    check outlookClient->sendMail({Message: message, SaveToSentItems: true});
 }
 
 @test:Config {groups: ["live_test", "mock_test"]}
@@ -204,7 +204,7 @@ isolated function testSendMessageWithoutAttachment() returns error? {
         body: body,
         toRecipients: [recipient]
     };
-    check outlookClient->/me/sendMail.post({Message: message, SaveToSentItems: true});
+    check outlookClient->sendMail({Message: message, SaveToSentItems: true});
 }
 
 @test:Config {dependsOn: [testSendMessage], groups: ["live_test", "mock_test"]}
@@ -221,7 +221,7 @@ isolated function testAddAttachment() returns error? {
         body: attachBody,
         toRecipients: [attachRecipient]
     };
-    MicrosoftGraphMessage createdMsg = check outlookClient->/me/messages.post(attachDraft);
+    MicrosoftGraphMessage createdMsg = check outlookClient->createDraftMessage(attachDraft);
     test:assertNotEquals(createdMsg?.id, (), "Message created for attachment test should have an ID");
     string msgId = createdMsg.id ?: "";
     lock {
@@ -233,7 +233,7 @@ isolated function testAddAttachment() returns error? {
         contentType: "text/plain",
         "contentBytes": "SGVsbG8gV29ybGQh"
     };
-    MicrosoftGraphAttachment result = check outlookClient->/me/messages/[msgId]/attachments.post(attachment);
+    MicrosoftGraphAttachment result = check outlookClient->addAttachment(msgId, attachment);
     test:assertNotEquals(result?.id, (), "Added attachment should have an ID");
     test:assertEquals(result?.name, "sample3_separate.txt", "Attachment name should match");
     lock {
@@ -247,14 +247,14 @@ isolated function testListAttachment() returns error? {
     lock {
         msgId = sentMessageId;
     }
-    MicrosoftGraphAttachmentCollectionResponse response = check outlookClient->/me/messages/[msgId]/attachments.get();
+    MicrosoftGraphAttachmentCollectionResponse response = check outlookClient->listAttachments(msgId);
     MicrosoftGraphAttachment[] allAttachments = response.value ?: [];
     test:assertTrue(allAttachments.length() > 0, "Should have at least one attachment");
 }
 
 @test:Config {groups: ["live_test", "mock_test"]}
 isolated function testCreateMailFolder() returns error? {
-    MicrosoftGraphMailFolder result = check outlookClient->/me/mailFolders.post({
+    MicrosoftGraphMailFolder result = check outlookClient->createMailFolder({
         atOdataType: "#microsoft.graph.mailFolder",
         displayName: "Test_Folder_01",
         isHidden: false
@@ -268,7 +268,7 @@ isolated function testCreateMailFolder() returns error? {
 
 @test:Config {dependsOn: [testCreateMailFolder], groups: ["live_test", "mock_test"]}
 isolated function testListMailFolders() returns error? {
-    MicrosoftGraphMailFolderCollectionResponse response = check outlookClient->/me/mailFolders(
+    MicrosoftGraphMailFolderCollectionResponse response = check outlookClient->listMailFolders(
         includeHiddenFolders = true);
     MicrosoftGraphMailFolder[] allFolders = response.value ?: [];
     test:assertTrue(allFolders.length() > 0, "Mail folder list should not be empty");
@@ -280,7 +280,7 @@ isolated function testGetMailFolder() returns error? {
     lock {
         folderId = mailFolderId;
     }
-    MicrosoftGraphMailFolder result = check outlookClient->/me/mailFolders/[folderId].get();
+    MicrosoftGraphMailFolder result = check outlookClient->getMailFolder(folderId);
     test:assertEquals(result?.id, folderId, "Returned folder ID should match the requested ID");
     test:assertEquals(result?.displayName, "Test_Folder_01", "Folder display name should match");
 }
@@ -291,7 +291,7 @@ isolated function testCreateChildMailFolder() returns error? {
     lock {
         folderId = mailFolderId;
     }
-    MicrosoftGraphMailFolder result = check outlookClient->/me/mailFolders/[folderId]/childFolders.post({
+    MicrosoftGraphMailFolder result = check outlookClient->createChildFolder(folderId, {
         atOdataType: "#microsoft.graph.mailFolder",
         displayName: "Test Child Folder",
         isHidden: false
@@ -306,7 +306,7 @@ isolated function testListChildMailFolders() returns error? {
     lock {
         folderId = mailFolderId;
     }
-    MicrosoftGraphMailFolderCollectionResponse _ = check outlookClient->/me/mailFolders/[folderId]/childFolders(
+    MicrosoftGraphMailFolderCollectionResponse _ = check outlookClient->listChildFolders(folderId,
         includeHiddenFolders = true);
 }
 
@@ -316,12 +316,12 @@ isolated function testDeleteMailFolder() returns error? {
     lock {
         folderId = mailFolderId;
     }
-    check outlookClient->/me/mailFolders/[folderId].delete();
+    check outlookClient->deleteMailFolder(folderId);
 }
 
 @test:Config {groups: ["live_test", "mock_test"]}
 isolated function testCreateMailSearchFolder() returns error? {
-    MicrosoftGraphMailFolder output = check outlookClient->/me/mailFolders.post({
+    MicrosoftGraphMailFolder output = check outlookClient->createMailFolder({
         atOdataType: "#microsoft.graph.mailSearchFolder",
         displayName: "TestSearch",
         isHidden: false,
@@ -335,7 +335,7 @@ isolated function testCreateMailSearchFolder() returns error? {
     lock {
         searchMailFolderId = searchFolderId;
     }
-    check outlookClient->/me/mailFolders/[searchFolderId].delete();
+    check outlookClient->deleteMailFolder(searchFolderId);
 }
 
 @test:Config {dependsOn: [testListAttachment], groups: ["live_test"], enable: isLiveServer}
@@ -344,7 +344,7 @@ isolated function testAddLargeFileAttachment() returns error? {
     lock {
         msgId = sentMessageId;
     }
-    MicrosoftGraphUploadSessionResponse sessionResponse = check outlookClient->/me/messages/[msgId]/attachments/createUploadSession.post({
+    MicrosoftGraphUploadSessionResponse sessionResponse = check outlookClient->createUploadSession(msgId, {
         attachmentItem: {
             atOdataType: "#microsoft.graph.attachmentItem",
             attachmentType: "file",
@@ -367,28 +367,28 @@ isolated function testDeleteAttachment() returns error? {
     lock {
         attId = attachmentId;
     }
-    check outlookClient->/me/messages/[msgId]/attachments/[attId].delete();
+    check outlookClient->deleteAttachment(msgId, attId);
 }
 
 @test:Config {dependsOn: [testDeleteAttachment], groups: ["live_test"], enable: isLiveServer}
 isolated function testDeleteMessage() returns error? {
-    MicrosoftGraphMessageCollectionResponse response = check outlookClient->/me/messages(
+    MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
         dollarSelect = ["sender", "subject", "hasAttachments"]);
     MicrosoftGraphMessage[] noAttachmentMessages = (response.value ?: []).filter(
         msg => msg?.hasAttachments == false);
     if noAttachmentMessages.length() > 0 {
-        check outlookClient->/me/messages/[noAttachmentMessages[0]?.id ?: ""].delete();
+        check outlookClient->deleteMessage(noAttachmentMessages[0]?.id ?: "");
     }
 }
 
 @test:AfterSuite {}
 isolated function afterFunc() returns error? {
-    MicrosoftGraphMessageCollectionResponse response = check outlookClient->/me/messages(
+    MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
         dollarSelect = ["sender", "subject", "hasAttachments"], dollarTop = 2);
     MicrosoftGraphMessage[] allMessages = response.value ?: [];
     foreach MicrosoftGraphMessage msg in allMessages {
         string messageId = msg?.id ?: "";
-        error? result = outlookClient->/me/messages/[messageId].delete();
+        error? result = outlookClient->deleteMessage(messageId);
         if result is error {
             log:printError(string `Failed to delete message: ${messageId}`, 'error = result);
         }
@@ -399,7 +399,7 @@ isolated function afterFunc() returns error? {
         sentMsgId = sentMessageId;
     }
     if sentMsgId != "" {
-        error? msgResult = outlookClient->/me/messages/[sentMsgId].delete();
+        error? msgResult = outlookClient->deleteMessage(sentMsgId);
         if msgResult is error {
             log:printError(string `Failed to delete draft message: ${sentMsgId}`, 'error = msgResult);
         }
@@ -410,7 +410,7 @@ isolated function afterFunc() returns error? {
         folderId = mailFolderId;
     }
     if folderId != "" {
-        error? folderResult = outlookClient->/me/mailFolders/[folderId].delete();
+        error? folderResult = outlookClient->deleteMailFolder(folderId);
         if folderResult is error {
             log:printError(string `Failed to delete mail folder: ${folderId}`, 'error = folderResult);
         }
