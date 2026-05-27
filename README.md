@@ -163,16 +163,14 @@ Now, utilize the available connector operations. A sample use case is shown belo
 
 ```ballerina
 public function main() returns error? {
-   mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->/me/messages.get(
-      queries = {
-         dollarTop: 5,
-         dollarSelect: ["id", "subject", "from", "receivedDateTime", "isRead"]
-      }
-   );
-   mail:MicrosoftGraphMessage[] messages = response.value ?: [];
-   foreach mail:MicrosoftGraphMessage message in messages {
-      io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
-   }
+    mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
+        dollarTop = 5,
+        dollarSelect = ["id", "subject", "from", "receivedDateTime", "isRead"]
+    );
+    mail:MicrosoftGraphMessage[] messages = response.value ?: [];
+    foreach mail:MicrosoftGraphMessage message in messages {
+        io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
+    }
 }
 ```
 
