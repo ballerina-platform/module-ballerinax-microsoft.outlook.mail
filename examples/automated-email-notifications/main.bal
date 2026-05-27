@@ -16,6 +16,7 @@
 
 import ballerina/io;
 import ballerinax/microsoft.outlook.mail;
+import ballerina/mime;
 
 configurable string refreshUrl = ?;
 configurable string refreshToken = ?;
@@ -35,9 +36,10 @@ public function main() returns error? {
     });
 
     // Step 1: Create a dedicated mail folder to store weekly report emails.
-    mail:MicrosoftGraphMailFolder reportsFolder = check outlookClient->/me/mailFolders.post({
+    mail:MicrosoftGraphMailFolder reportsFolder = check outlookClient->createMailFolder({
         displayName: "Weekly Status Reports"
     });
+    
     io:println("Created folder: ", reportsFolder?.displayName, " (ID: ", reportsFolder?.id, ")");
 
     // Step 2: Create a draft message with an HTML-formatted weekly status report.
@@ -59,7 +61,7 @@ public function main() returns error? {
         emailAddress: <mail:MicrosoftGraphEmailAddress>{address: recipientEmail, name: recipientName}
     };
 
-    mail:MicrosoftGraphMessage draft = check outlookClient->/me/messages.post({
+    mail:MicrosoftGraphMessage draft = check outlookClient->createDraftMessage({
         subject: "[Weekly Report] Project Status Update",
         importance: "normal",
         body: reportBody,
@@ -74,24 +76,28 @@ public function main() returns error? {
     io:println("Draft created (ID: ", draftId, ")");
 
     // Step 3: Attach a plain-text summary report to the draft.
-    // contentBytes is the base64-encoded content of the summary file.
     mail:MicrosoftGraphAttachment attachment = {
         atOdataType: "#microsoft.graph.fileAttachment",
         name: "status-summary.txt",
         contentType: "text/plain",
         isInline: false
     };
-    attachment["contentBytes"] = "UHJvamVjdCBTdGF0dXMgU3VtbWFyeQo9PT09PT09PT09PT09PT09CkFscGhhOiAgNzUlIGNvbXBsZXRlCkJldGE6ICAgTmVlZHMgYXR0ZW50aW9uCkdhbW1hOiAgQ29tcGxldGVk";
 
-    mail:MicrosoftGraphAttachment addedAttachment = check outlookClient->/me/messages/[draftId]/attachments.post(attachment);
-    io:println("Attached: ", addedAttachment?.name);
+    // contentBytes is the base64-encoded content of the summary file.
+    string listResult = check io:fileReadString("summary.txt");
+    string|byte[]|io:ReadableByteChannel base64Encode = check mime:base64Encode(listResult);
+    if base64Encode is string {
+        attachment["contentBytes"] = base64Encode;
+        mail:MicrosoftGraphAttachment addedAttachment = check outlookClient->addAttachment(draftId, attachment);
+        io:println("Attached: ", addedAttachment?.name);
+    }
 
     // Step 4: Send the draft to the recipient.
-    check outlookClient->/me/messages/[draftId]/send.post();
+    check outlookClient->sendDraftMessage(draftId);
     io:println("Weekly status report sent successfully!");
 
     // Step 5: Confirm delivery by listing recent messages from the mailbox.
-    mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->/me/messages.get();
+    mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages();
     mail:MicrosoftGraphMessage[] recentMessages = response.value ?: [];
     io:println("Total messages in mailbox: ", recentMessages.length());
 }

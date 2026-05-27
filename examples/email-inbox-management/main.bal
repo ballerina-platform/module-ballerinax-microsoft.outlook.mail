@@ -33,12 +33,10 @@ public function main() returns error? {
     });
 
     // Step 1: List unread messages in the inbox to identify new support requests.
-    mail:MicrosoftGraphMessageCollectionResponse inboxResponse = check outlookClient->/me/messages.get(
-        queries = {
-            dollarFilter: "isRead eq false",
-            dollarTop: 10,
-            dollarSelect: ["id", "subject", "from", "receivedDateTime", "bodyPreview"]
-        }
+    mail:MicrosoftGraphMessageCollectionResponse inboxResponse = check outlookClient->listMessages(
+        dollarFilter = "isRead eq false",
+        dollarTop = 10,
+        dollarSelect = ["id", "subject", "from", "receivedDateTime", "bodyPreview"]
     );
     mail:MicrosoftGraphMessage[] unreadMessages = inboxResponse.value ?: [];
     io:println("Unread messages in inbox: ", unreadMessages.length());
@@ -55,19 +53,19 @@ public function main() returns error? {
         return;
     }
     string firstMessageId = firstMsgIdOpt;
-    mail:MicrosoftGraphMessage fullMessage = check outlookClient->/me/messages/[firstMessageId].get();
+    mail:MicrosoftGraphMessage fullMessage = check outlookClient->getMessage(firstMessageId);
     io:println("Reviewing message: ", fullMessage?.subject);
     io:println("From: ", fullMessage?.'from);
     io:println("Preview: ", fullMessage?.bodyPreview);
 
     // Step 3: Mark the reviewed message as read to track triage progress.
-    mail:MicrosoftGraphMessage updatedMessage = check outlookClient->/me/messages/[firstMessageId].patch({
+    mail:MicrosoftGraphMessage updatedMessage = check outlookClient->updateMessage(firstMessageId, {
         isRead: true
     });
     io:println("Marked as read: ", updatedMessage?.subject, " (isRead: ", updatedMessage?.isRead, ")");
 
     // Step 4: Create a "Customer Support" folder to organize processed tickets.
-    mail:MicrosoftGraphMailFolder supportFolder = check outlookClient->/me/mailFolders.post({
+    mail:MicrosoftGraphMailFolder supportFolder = check outlookClient->createMailFolder({
         displayName: "Customer Support"
     });
     io:println("Created folder: ", supportFolder?.displayName, " (ID: ", supportFolder?.id, ")");
@@ -79,7 +77,7 @@ public function main() returns error? {
         return;
     }
     string folderId = folderIdOpt;
-    mail:MicrosoftGraphMailFolder folderDetails = check outlookClient->/me/mailFolders/[folderId].get();
+    mail:MicrosoftGraphMailFolder folderDetails = check outlookClient->getMailFolder(folderId);
     io:println("Folder details — Name: ", folderDetails?.displayName,
         ", Total items: ", folderDetails?.totalItemCount,
         ", Unread: ", folderDetails?.unreadItemCount);
@@ -89,7 +87,7 @@ public function main() returns error? {
     if unreadMessages.length() > 1 {
         string? spamMsgIdOpt = unreadMessages[1]?.id;
         if spamMsgIdOpt is string {
-            check outlookClient->/me/messages/[spamMsgIdOpt].delete();
+            check outlookClient->deleteMessage(spamMsgIdOpt);
             io:println("Deleted message: ", unreadMessages[1]?.subject);
         }
     }
