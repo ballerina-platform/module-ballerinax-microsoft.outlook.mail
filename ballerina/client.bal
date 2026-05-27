@@ -38,7 +38,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved collection 
-    resource isolated function get me/messages(map<string|string[]> headers = {}, *MeListMessagesQueries queries) returns MicrosoftGraphMessageCollectionResponse|error {
+    remote isolated function listMessages(map<string|string[]> headers = {}, *ListMessagesQueries queries) returns MicrosoftGraphMessageCollectionResponse|error {
         string resourcePath = string `/me/messages`;
         map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -50,7 +50,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - New message draft 
     # + return - Created message draft 
-    resource isolated function post me/messages(MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
+    remote isolated function createDraftMessage(MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
         string resourcePath = string `/me/messages`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -64,7 +64,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved message 
-    resource isolated function get me/messages/[string messageId](map<string|string[]> headers = {}, *MeGetMessagesQueries queries) returns MicrosoftGraphMessage|error {
+    remote isolated function getMessage(string messageId, map<string|string[]> headers = {}, *GetMessageQueries queries) returns MicrosoftGraphMessage|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}`;
         map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -76,7 +76,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
     # + return - Success 
-    resource isolated function delete me/messages/[string messageId](MeDeleteMessagesHeaders headers = {}) returns error? {
+    remote isolated function deleteMessage(string messageId, DeleteMessageHeaders headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
         return self.clientEp->delete(resourcePath, headers = httpHeaders);
@@ -88,7 +88,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
     # + return - Success 
-    resource isolated function patch me/messages/[string messageId](MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
+    remote isolated function updateMessage(string messageId, MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -101,7 +101,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
     # + return - Success 
-    resource isolated function post me/messages/[string messageId]/send(MeMessagesMessageSendHeaders headers = {}) returns error? {
+    remote isolated function sendDraftMessage(string messageId, SendDraftMessageHeaders headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/send`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
         http:Request request = new;
@@ -114,7 +114,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
     # + return - Success 
-    resource isolated function post me/messages/[string messageId]/copy(MessageIdCopyBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessageResponse|error {
+    remote isolated function copyMessage(string messageId, MessageIdCopyBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessageResponse|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/copy`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -128,7 +128,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
     # + return - Success 
-    resource isolated function post me/messages/[string messageId]/forward(MessageIdForwardBody payload, map<string|string[]> headers = {}) returns error? {
+    remote isolated function forwardMessage(string messageId, MessageIdForwardBody payload, map<string|string[]> headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/forward`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -142,7 +142,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved collection 
-    resource isolated function get me/messages/[string messageId]/attachments(map<string|string[]> headers = {}, *MeMessagesListAttachmentsQueries queries) returns MicrosoftGraphAttachmentCollectionResponse|error {
+    remote isolated function listAttachments(string messageId, map<string|string[]> headers = {}, *ListAttachmentsQueries queries) returns MicrosoftGraphAttachmentCollectionResponse|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/attachments`;
         map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -155,7 +155,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - New attachment 
     # + return - Created attachment 
-    resource isolated function post me/messages/[string messageId]/attachments(MicrosoftGraphAttachment payload, map<string|string[]> headers = {}) returns MicrosoftGraphAttachment|error {
+    remote isolated function addAttachment(string messageId, MicrosoftGraphAttachment payload, map<string|string[]> headers = {}) returns MicrosoftGraphAttachment|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/attachments`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -170,7 +170,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved attachment 
-    resource isolated function get me/messages/[string messageId]/attachments/[string attachmentId](map<string|string[]> headers = {}, *MeMessagesGetAttachmentsQueries queries) returns MicrosoftGraphAttachment|error {
+    remote isolated function getAttachment(string messageId, string attachmentId, map<string|string[]> headers = {}, *GetAttachmentQueries queries) returns MicrosoftGraphAttachment|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/attachments/${getEncodedUri(attachmentId)}`;
         map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -183,7 +183,7 @@ public isolated client class Client {
     # + attachmentId - The unique identifier of attachment
     # + headers - Headers to be sent with the request 
     # + return - Success 
-    resource isolated function delete me/messages/[string messageId]/attachments/[string attachmentId](MeMessagesDeleteAttachmentsHeaders headers = {}) returns error? {
+    remote isolated function deleteAttachment(string messageId, string attachmentId, DeleteAttachmentHeaders headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/attachments/${getEncodedUri(attachmentId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
         return self.clientEp->delete(resourcePath, headers = httpHeaders);
@@ -195,7 +195,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
     # + return - Success - returns an upload session 
-    resource isolated function post me/messages/[string messageId]/attachments/createUploadSession(AttachmentsCreateUploadSessionBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphUploadSessionResponse|error {
+    remote isolated function createUploadSession(string messageId, AttachmentsCreateUploadSessionBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphUploadSessionResponse|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/attachments/createUploadSession`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -208,7 +208,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
     # + return - Success 
-    resource isolated function post me/sendMail(record {MicrosoftGraphMessage Message?; boolean? SaveToSentItems = true;} payload, map<string|string[]> headers = {}) returns error? {
+    remote isolated function sendMail(record {MicrosoftGraphMessage Message?; boolean? SaveToSentItems = true;} payload, map<string|string[]> headers = {}) returns error? {
         string resourcePath = string `/me/sendMail`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -221,7 +221,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved collection 
-    resource isolated function get me/mailFolders(map<string|string[]> headers = {}, *MeListMailFoldersQueries queries) returns MicrosoftGraphMailFolderCollectionResponse|error {
+    remote isolated function listMailFolders(map<string|string[]> headers = {}, *ListMailFoldersQueries queries) returns MicrosoftGraphMailFolderCollectionResponse|error {
         string resourcePath = string `/me/mailFolders`;
         map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -233,7 +233,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - New mail folder (use '@odata.type': '#microsoft.graph.mailSearchFolder' to create a search folder) 
     # + return - Created mail folder 
-    resource isolated function post me/mailFolders(MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+    remote isolated function createMailFolder(MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -247,7 +247,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved mail folder 
-    resource isolated function get me/mailFolders/[string mailFolderId](map<string|string[]> headers = {}, *MeGetMailFoldersQueries queries) returns MicrosoftGraphMailFolder|error {
+    remote isolated function getMailFolder(string mailFolderId, map<string|string[]> headers = {}, *GetMailFolderQueries queries) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}`;
         map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -259,7 +259,7 @@ public isolated client class Client {
     # + mailFolderId - The unique identifier of mailFolder
     # + headers - Headers to be sent with the request 
     # + return - Success 
-    resource isolated function delete me/mailFolders/[string mailFolderId](MeDeleteMailFoldersHeaders headers = {}) returns error? {
+    remote isolated function deleteMailFolder(string mailFolderId, DeleteMailFolderHeaders headers = {}) returns error? {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
         return self.clientEp->delete(resourcePath, headers = httpHeaders);
@@ -271,7 +271,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
     # + return - Success 
-    resource isolated function patch me/mailFolders/[string mailFolderId](MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+    remote isolated function updateMailFolder(string mailFolderId, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -285,7 +285,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved collection 
-    resource isolated function get me/mailFolders/[string mailFolderId]/childFolders(map<string|string[]> headers = {}, *MeMailFoldersListChildFoldersQueries queries) returns MicrosoftGraphMailFolderCollectionResponse|error {
+    remote isolated function listChildFolders(string mailFolderId, map<string|string[]> headers = {}, *ListChildFoldersQueries queries) returns MicrosoftGraphMailFolderCollectionResponse|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}/childFolders`;
         map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -298,7 +298,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - New child mail folder 
     # + return - Created child mail folder 
-    resource isolated function post me/mailFolders/[string mailFolderId]/childFolders(MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+    remote isolated function createChildFolder(string mailFolderId, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}/childFolders`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -313,7 +313,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + queries - Queries to be sent with the request 
     # + return - Retrieved child mail folder 
-    resource isolated function get me/mailFolders/[string mailFolderId]/childFolders/[string mailFolderId1](map<string|string[]> headers = {}, *MeMailFoldersGetChildFoldersQueries queries) returns MicrosoftGraphMailFolder|error {
+    remote isolated function getChildFolder(string mailFolderId, string mailFolderId1, map<string|string[]> headers = {}, *GetChildFolderQueries queries) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
         map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
         resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
@@ -326,7 +326,7 @@ public isolated client class Client {
     # + mailFolderId1 - The unique identifier of child mailFolder
     # + headers - Headers to be sent with the request 
     # + return - Success 
-    resource isolated function delete me/mailFolders/[string mailFolderId]/childFolders/[string mailFolderId1](MeMailFoldersDeleteChildFoldersHeaders headers = {}) returns error? {
+    remote isolated function deleteChildFolder(string mailFolderId, string mailFolderId1, DeleteChildFolderHeaders headers = {}) returns error? {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
         return self.clientEp->delete(resourcePath, headers = httpHeaders);
@@ -339,7 +339,7 @@ public isolated client class Client {
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
     # + return - Success 
-    resource isolated function patch me/mailFolders/[string mailFolderId]/childFolders/[string mailFolderId1](MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+    remote isolated function updateChildFolder(string mailFolderId, string mailFolderId1, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);

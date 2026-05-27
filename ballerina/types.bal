@@ -27,20 +27,96 @@ public type OAuth2ClientCredentialsGrantConfig record {|
     string tokenUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 |};
 
+# Represents the Queries record for the operation: listMailFolders
+public type ListMailFoldersQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include Hidden Folders
+    boolean includeHiddenFolders?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
 public type MicrosoftGraphMessageResponse MicrosoftGraphMessage|CompletedResponse?;
+
+# Represents the Queries record for the operation: listAttachments
+public type ListAttachmentsQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
 
 public type AttachmentsCreateUploadSessionBody record {
     @jsondata:Name {value: "AttachmentItem"}
     MicrosoftGraphAttachmentItem attachmentItem?;
 };
 
-# Represents the Queries record for the operation: me.mailFolders.GetChildFolders
-public type MeMailFoldersGetChildFoldersQueries record {
+# Represents the Queries record for the operation: listMessages
+public type ListMessagesQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Include Hidden Messages
+    boolean includeHiddenMessages?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
     # Expand related entities
     @http:Query {name: "$expand"}
     string[] dollarExpand?;
-    # Include Hidden Folders
-    boolean includeHiddenFolders?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
     # Select properties to be returned
     @http:Query {name: "$select"}
     string[] dollarSelect?;
@@ -53,6 +129,16 @@ public type MicrosoftGraphEntity record {
     string atOdataType?;
     # The unique identifier for an entity. Read-only
     string id?;
+};
+
+# Represents the Queries record for the operation: getMessage
+public type GetMessageQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
 };
 
 public type MicrosoftGraphMessage record {
@@ -144,66 +230,13 @@ public type MicrosoftGraphMailFolder record {
     decimal? totalItemCount?;
 };
 
-# Represents the Queries record for the operation: me.ListMessages
-public type MeListMessagesQueries record {
-    # Skip the first n items
-    @http:Query {name: "$skip"}
-    int dollarSkip?;
-    # Include Hidden Messages
-    boolean includeHiddenMessages?;
-    # Show only the first n items
-    @http:Query {name: "$top"}
-    int dollarTop?;
-    # Filter items by property values
-    @http:Query {name: "$filter"}
-    string dollarFilter?;
-    # Search items by search phrases
-    @http:Query {name: "$search"}
-    string dollarSearch?;
-    # Order items by property values
-    @http:Query {name: "$orderby"}
-    string[] dollarOrderby?;
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Include count of items
-    @http:Query {name: "$count"}
-    boolean dollarCount?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
-};
-
 public type MicrosoftGraphAttachmentType "file"|"item"|"reference";
 
-# Represents the Queries record for the operation: me.ListMailFolders
-public type MeListMailFoldersQueries record {
-    # Skip the first n items
-    @http:Query {name: "$skip"}
-    int dollarSkip?;
-    # Show only the first n items
-    @http:Query {name: "$top"}
-    int dollarTop?;
-    # Filter items by property values
-    @http:Query {name: "$filter"}
-    string dollarFilter?;
-    # Search items by search phrases
-    @http:Query {name: "$search"}
-    string dollarSearch?;
-    # Order items by property values
-    @http:Query {name: "$orderby"}
-    string[] dollarOrderby?;
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Include Hidden Folders
-    boolean includeHiddenFolders?;
-    # Include count of items
-    @http:Query {name: "$count"}
-    boolean dollarCount?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
+# Represents the Headers record for the operation: sendDraftMessage
+public type SendDraftMessageHeaders record {
+    # Must be 0 as this operation sends an empty body
+    @http:Header {name: "Content-Length"}
+    int contentLength = 0;
 };
 
 public type MicrosoftGraphMailFolderCollectionResponse record {
@@ -211,28 +244,21 @@ public type MicrosoftGraphMailFolderCollectionResponse record {
     MicrosoftGraphMailFolder[] value?;
 };
 
-# Represents the Headers record for the operation: me.DeleteMessages
-public type MeDeleteMessagesHeaders record {
+# Represents the Headers record for the operation: deleteChildFolder
+public type DeleteChildFolderHeaders record {
     # ETag
     @http:Header {name: "If-Match"}
     string ifMatch?;
 };
 
-# Represents the Headers record for the operation: me.messages.message.send
-public type MeMessagesMessageSendHeaders record {
-    # Must be 0 as this operation sends an empty body
-    @http:Header {name: "Content-Length"}
-    int contentLength = 0;
+# Represents the Headers record for the operation: deleteMessage
+public type DeleteMessageHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
 };
 
 public type MicrosoftGraphUploadSessionResponse MicrosoftGraphUploadSession|UploadSessionCompletedResponse?;
-
-# Represents the Headers record for the operation: me.mailFolders.DeleteChildFolders
-public type MeMailFoldersDeleteChildFoldersHeaders record {
-    # ETag
-    @http:Header {name: "If-Match"}
-    string ifMatch?;
-};
 
 # OAuth2 Refresh Token Grant Configs
 public type OAuth2RefreshTokenGrantConfig record {|
@@ -241,14 +267,11 @@ public type OAuth2RefreshTokenGrantConfig record {|
     string refreshUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 |};
 
-# Represents the Queries record for the operation: me.messages.GetAttachments
-public type MeMessagesGetAttachmentsQueries record {
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
+# Represents the Headers record for the operation: deleteAttachment
+public type DeleteAttachmentHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
 };
 
 public type MicrosoftGraphInternetMessageHeader record {
@@ -260,14 +283,11 @@ public type MicrosoftGraphInternetMessageHeader record {
     string? value?;
 };
 
-# Represents the Queries record for the operation: me.GetMessages
-public type MeGetMessagesQueries record {
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
+# Represents the Headers record for the operation: deleteMailFolder
+public type DeleteMailFolderHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
 };
 
 # Provides a set of configurations for controlling the behaviours when communicating with a remote HTTP endpoint.
@@ -361,6 +381,16 @@ public type MicrosoftGraphAttachmentCollectionResponse record {
     MicrosoftGraphAttachment[] value?;
 };
 
+# Represents the Queries record for the operation: getAttachment
+public type GetAttachmentQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
 public type MicrosoftGraphItemBody record {
     @jsondata:Name {value: "@odata.type"}
     string atOdataType?;
@@ -368,34 +398,6 @@ public type MicrosoftGraphItemBody record {
     MicrosoftGraphBodyType|record {} contentType?;
     # The content of the item
     string? content?;
-};
-
-# Represents the Queries record for the operation: me.messages.ListAttachments
-public type MeMessagesListAttachmentsQueries record {
-    # Skip the first n items
-    @http:Query {name: "$skip"}
-    int dollarSkip?;
-    # Show only the first n items
-    @http:Query {name: "$top"}
-    int dollarTop?;
-    # Filter items by property values
-    @http:Query {name: "$filter"}
-    string dollarFilter?;
-    # Search items by search phrases
-    @http:Query {name: "$search"}
-    string dollarSearch?;
-    # Order items by property values
-    @http:Query {name: "$orderby"}
-    string[] dollarOrderby?;
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Include count of items
-    @http:Query {name: "$count"}
-    boolean dollarCount?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
 };
 
 public type BaseCollectionPaginationCountResponse record {
@@ -411,11 +413,16 @@ public type MicrosoftGraphExtension record {
     string atOdataType?;
 };
 
-# Represents the Headers record for the operation: me.DeleteMailFolders
-public type MeDeleteMailFoldersHeaders record {
-    # ETag
-    @http:Header {name: "If-Match"}
-    string ifMatch?;
+# Represents the Queries record for the operation: getChildFolder
+public type GetChildFolderQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include Hidden Folders
+    boolean includeHiddenFolders?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
 };
 
 public type MicrosoftGraphAttachmentItem record {
@@ -451,54 +458,7 @@ public type MicrosoftGraphAttachment record {
     string? contentType?;
 };
 
-# Represents the Queries record for the operation: me.GetMailFolders
-public type MeGetMailFoldersQueries record {
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
-};
-
-# Represents the Queries record for the operation: me.mailFolders.ListChildFolders
-public type MeMailFoldersListChildFoldersQueries record {
-    # Skip the first n items
-    @http:Query {name: "$skip"}
-    int dollarSkip?;
-    # Show only the first n items
-    @http:Query {name: "$top"}
-    int dollarTop?;
-    # Filter items by property values
-    @http:Query {name: "$filter"}
-    string dollarFilter?;
-    # Search items by search phrases
-    @http:Query {name: "$search"}
-    string dollarSearch?;
-    # Order items by property values
-    @http:Query {name: "$orderby"}
-    string[] dollarOrderby?;
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Include Hidden Folders
-    boolean includeHiddenFolders?;
-    # Include count of items
-    @http:Query {name: "$count"}
-    boolean dollarCount?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
-};
-
 public type MicrosoftGraphInferenceClassificationType "focused"|"other";
-
-# Represents the Headers record for the operation: me.messages.DeleteAttachments
-public type MeMessagesDeleteAttachmentsHeaders record {
-    # ETag
-    @http:Header {name: "If-Match"}
-    string ifMatch?;
-};
 
 public type MicrosoftGraphBodyType "text"|"html";
 
@@ -514,6 +474,16 @@ public type MicrosoftGraphUploadSession record {
 };
 
 public type UploadSessionCompletedResponse record {
+};
+
+# Represents the Queries record for the operation: getMailFolder
+public type GetMailFolderQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
 };
 
 public type MicrosoftGraphFollowupFlag record {
@@ -547,4 +517,34 @@ public type MessageIdCopyBody record {
     # The destination folder ID or well-known folder name
     @jsondata:Name {value: "DestinationId"}
     string destinationId?;
+};
+
+# Represents the Queries record for the operation: listChildFolders
+public type ListChildFoldersQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include Hidden Folders
+    boolean includeHiddenFolders?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
 };
