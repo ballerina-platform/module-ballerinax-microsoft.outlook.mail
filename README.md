@@ -94,7 +94,7 @@ Before using the connector, obtain a refresh token using the following OAuth2 au
 4. Exchange the authorization code for tokens by running the following `curl` command. Replace the placeholder values with your specific values. For `SCOPE` you can use this `Mail.Read Mail.ReadWrite Mail.Send User.Read offline_access`
 
    ```bash
-    curl --location 'https://login.microsoftonline.com/consumers/oauth2/v2.0/token' \
+    curl --location 'https://login.microsoftonline.com/common/oauth2/v2.0/token' \
     --header 'Content-Type: application/x-www-form-urlencoded' \
     --data-urlencode 'grant_type=authorization_code' \
     --data-urlencode 'code=<CODE>' \
