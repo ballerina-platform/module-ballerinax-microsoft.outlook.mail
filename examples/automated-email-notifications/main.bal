@@ -25,16 +25,16 @@ configurable string clientSecret = ?;
 configurable string recipientEmail = ?;
 configurable string recipientName = ?;
 
-public function main() returns error? {
-    mail:Client outlookClient = check new ({
-        auth: {
-            clientId: clientId,
-            clientSecret: clientSecret,
-            refreshToken: refreshToken,
-            refreshUrl: refreshUrl
-        }
-    });
+final mail:Client outlookClient = check new ({
+    auth: {
+        clientId,
+        clientSecret,
+        refreshToken,
+        refreshUrl
+    }
+});
 
+public function main() returns error? {
     // Step 1: Create a dedicated mail folder to store weekly report emails.
     mail:MicrosoftGraphMailFolder reportsFolder = check outlookClient->createMailFolder({
         displayName: "Weekly Status Reports"

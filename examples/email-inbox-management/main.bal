@@ -22,16 +22,16 @@ configurable string refreshToken = ?;
 configurable string clientId = ?;
 configurable string clientSecret = ?;
 
-public function main() returns error? {
-    mail:Client outlookClient = check new ({
-        auth: {
-            clientId: clientId,
-            clientSecret: clientSecret,
-            refreshToken: refreshToken,
-            refreshUrl: refreshUrl
-        }
-    });
+final mail:Client outlookClient = check new ({
+    auth: {
+        clientId,
+        clientSecret,
+        refreshToken,
+        refreshUrl
+    }
+});
 
+public function main() returns error? {
     // Step 1: List unread messages in the inbox to identify new support requests.
     mail:MicrosoftGraphMessageCollectionResponse inboxResponse = check outlookClient->listMessages(
         dollarFilter = "isRead eq false",
