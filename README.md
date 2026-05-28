@@ -85,7 +85,7 @@ Before using the connector, obtain a refresh token using the following OAuth2 au
    https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=<CLIENT_ID>&response_type=code&redirect_uri=<REDIRECT_URI>&scope=<SCOPE>&response_mode=query
    ```
 
-   Example values for `<SCOPE>`: `Mail.Read Mail.ReadWrite Mail.Send MailboxSettings.Read offline_access`
+   Example values for `<SCOPE>`: `Mail.Read Mail.ReadWrite Mail.Send User.Read offline_access`
 
 2. Open the URL in a browser and sign in with your Microsoft account. Grant the requested permissions.
 
@@ -94,7 +94,7 @@ Before using the connector, obtain a refresh token using the following OAuth2 au
 4. Exchange the authorization code for tokens by running the following `curl` command. Replace the placeholder values with your specific values. For `SCOPE` you can use this `Mail.Read Mail.ReadWrite Mail.Send User.Read offline_access`
 
    ```bash
-    curl --location 'https://login.microsoftonline.com/consumers/oauth2/v2.0/token' \
+    curl --location 'https://login.microsoftonline.com/common/oauth2/v2.0/token' \
     --header 'Content-Type: application/x-www-form-urlencoded' \
     --data-urlencode 'grant_type=authorization_code' \
     --data-urlencode 'code=<CODE>' \
@@ -117,6 +117,8 @@ Before using the connector, obtain a refresh token using the following OAuth2 au
    ```
 
 5. Store the `refresh_token` securely for use in your application.
+
+6. Use `https://login.microsoftonline.com/common/oauth2/v2.0/token` as the `REFRESH_URL`.
 
 ## Quickstart
 
