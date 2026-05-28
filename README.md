@@ -126,56 +126,56 @@ To use the `microsoft.outlook.mail` connector in your Ballerina application, upd
 
 Import the `microsoft.outlook.mail` module.
 
-   ```ballerina
-   import ballerinax/microsoft.outlook.mail;
-   ```
+```ballerina
+import ballerinax/microsoft.outlook.mail;
+```
 
 ### Step 2: Instantiate a new connector
 
 1. Create a `Config.toml` file and configure the credentials obtained above:
 
-   ```toml
-   clientId = "<CLIENT_ID>"
-   clientSecret = "<CLIENT_SECRET>"
-   refreshToken = "<REFRESH_TOKEN>"
-   refreshUrl = "<REFRESH_URL>"
-   ```
+```toml
+clientId = "<CLIENT_ID>"
+clientSecret = "<CLIENT_SECRET>"
+refreshToken = "<REFRESH_TOKEN>"
+refreshUrl = "<REFRESH_URL>"
+```
 
 2. Instantiate a `mail:ConnectionConfig` with the obtained credentials and initialize the connector with it.
 
-   ```ballerina
-   configurable string clientId = ?;
-   configurable string clientSecret = ?;
-   configurable string refreshToken = ?;
-   configurable string refreshUrl = ?;
+```ballerina
+configurable string clientId = ?;
+configurable string clientSecret = ?;
+configurable string refreshToken = ?;
+configurable string refreshUrl = ?;
 
-   final mail:Client outlookClient = check new ({
-      auth: {
-         clientId,
-         clientSecret,
-         refreshToken,
-         refreshUrl
-      }
-   });
-   ```
+final mail:Client outlookClient = check new ({
+   auth: {
+      clientId,
+      clientSecret,
+      refreshToken,
+      refreshUrl
+   }
+});
+```
 
 ### Step 3: Invoke the connector operation
 
 Now, utilize the available connector operations. A sample use case is shown below.
 
-   ```ballerina
-   // List the most recent messages in the mailbox
-   public function main() returns error? {
-      mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
-         dollarTop = 5,
-         dollarSelect = ["id", "subject", "from", "receivedDateTime", "isRead"]
-      );
-      mail:MicrosoftGraphMessage[] messages = response.value ?: [];
-      foreach mail:MicrosoftGraphMessage message in messages {
-         io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
-      }
+```ballerina
+// List the most recent messages in the mailbox
+public function main() returns error? {
+   mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
+      dollarTop = 5,
+      dollarSelect = ["id", "subject", "from", "receivedDateTime", "isRead"]
+   );
+   mail:MicrosoftGraphMessage[] messages = response.value ?: [];
+   foreach mail:MicrosoftGraphMessage message in messages {
+      io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
    }
-   ```
+}
+```
 
 ## Examples
 
