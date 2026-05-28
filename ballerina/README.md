@@ -25,10 +25,12 @@ To use the Microsoft Outlook Mail connector, you need a Microsoft account and an
 2. Click **New registration** in the top menu.
 
 3. Fill in the application details.
+
    - **Name**: Provide a name for your app (e.g., `Ballerina Outlook Connector App`)
    - **Supported account types**: Select **Any Entra ID Tenant + Personal Microsoft Accounts**.
    - **Redirect URI**: Select **Web** and enter your redirect URI (e.g., `http://localhost` for local testing).
-   <br\>
+
+   <br>
 
    ![Register application](https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/refs/heads/main/docs/resources/register-application.png)
 
@@ -43,6 +45,7 @@ To use the Microsoft Outlook Mail connector, you need a Microsoft account and an
    ![Add API permissions](https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/refs/heads/main/docs/resources/add-api-permissions.png)
 
 3. Add the following permissions.
+
    - `Mail.Read`
    - `Mail.ReadWrite`
    - `Mail.Send`
@@ -84,7 +87,7 @@ Before using the connector, obtain a refresh token using the following OAuth2 au
 
 3. After authorization, you will be redirected to your redirect URI with a `code` parameter in the URL. Copy this code.
 
-4. Exchange the authorization code for tokens by running the following `curl` command. Replace the placeholder values with your specific values. For `SCOPE` you can use this `Mail.Read Mail.ReadWrite Mail.Send User.Read offline_access`
+4. Exchange the authorization code for tokens by running the following `curl` command. Replace the placeholder values with your specific values. For `SCOPE` you can use this `Mail.Read Mail.ReadWrite Mail.Send User.Read offline_access`.
 
    ```bash
     curl --location 'https://login.microsoftonline.com/consumers/oauth2/v2.0/token' \
@@ -111,6 +114,8 @@ Before using the connector, obtain a refresh token using the following OAuth2 au
 
 5. Store the `refresh_token` securely for use in your application.
 
+6. Use `https://login.microsoftonline.com/consumers/oauth2/v2.0/token` as the `REFRESH_URL`.
+
 ## Quickstart
 
 To use the `microsoft.outlook.mail` connector in your Ballerina application, update your `.bal` file as follows:
@@ -131,7 +136,7 @@ import ballerinax/microsoft.outlook.mail;
    clientId = "<CLIENT_ID>"
    clientSecret = "<CLIENT_SECRET>"
    refreshToken = "<REFRESH_TOKEN>"
-   refreshUrl = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
+   refreshUrl = "<REFRESH_URL>"
    ```
 
 2. Instantiate a `mail:ConnectionConfig` with the obtained credentials and initialize the connector with it.
@@ -156,20 +161,19 @@ import ballerinax/microsoft.outlook.mail;
 
 Now, utilize the available connector operations. A sample use case is shown below.
 
-#### List the most recent messages in the mailbox
-
-```ballerina
-public function main() returns error? {
-    mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
-        dollarTop = 5,
-        dollarSelect = ["id", "subject", "from", "receivedDateTime", "isRead"]
-    );
-    mail:MicrosoftGraphMessage[] messages = response.value ?: [];
-    foreach mail:MicrosoftGraphMessage message in messages {
-        io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
-    }
-}
-```
+   ```ballerina
+   // List the most recent messages in the mailbox
+   public function main() returns error? {
+      mail:MicrosoftGraphMessageCollectionResponse response = check outlookClient->listMessages(
+         dollarTop = 5,
+         dollarSelect = ["id", "subject", "from", "receivedDateTime", "isRead"]
+      );
+      mail:MicrosoftGraphMessage[] messages = response.value ?: [];
+      foreach mail:MicrosoftGraphMessage message in messages {
+         io:println("Subject: ", message?.subject, " | Read: ", message?.isRead);
+      }
+   }
+   ```
 
 ## Examples
 
