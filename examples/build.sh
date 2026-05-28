@@ -38,10 +38,20 @@ echo "Successfully cleaned the cache directories"
 BAL_DESTINATION_DIR="$HOME/.ballerina/repositories/central.ballerina.io/bala/ballerinax/$BAL_PACKAGE_NAME"
 BAL_SOURCE_DIR="$HOME/.ballerina/repositories/local/bala/ballerinax/$BAL_PACKAGE_NAME"
 [ -d "$BAL_DESTINATION_DIR" ] && rm -r "$BAL_DESTINATION_DIR"
+mkdir -p "$(dirname "$BAL_DESTINATION_DIR")"
 [ -d "$BAL_SOURCE_DIR" ] && cp -r "$BAL_SOURCE_DIR" "$BAL_DESTINATION_DIR"
 echo "Successfully updated the local central repositories"
 
-# Loop through examples in the examples directory
-find "$BAL_EXAMPLES_DIR" -type f -name "*.bal" | while read -r BAL_EXAMPLE_FILE; do
-  bal "$BAL_CMD" --offline "$BAL_EXAMPLE_FILE"
+# Loop through example subdirectories and build/run each one
+find "$BAL_EXAMPLES_DIR" -maxdepth 1 -mindepth 1 -type d -print0 | while IFS= read -r -d '' dir; do
+  # Skip the build directory
+  if [[ "$dir" == *build ]]; then
+    continue
+  fi
+  (cd "$dir" && bal "$BAL_CMD" --offline)
+done
+
+# Remove generated JAR files
+find "$BAL_HOME_DIR" -maxdepth 1 -type f -name "*.jar" | while read -r JAR_FILE; do
+  rm "$JAR_FILE"
 done

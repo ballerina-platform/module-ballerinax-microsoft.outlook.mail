@@ -2,7 +2,7 @@
 distribution = "2201.12.0"
 org = "ballerinax"
 name = "microsoft.outlook.mail"
-version = "3.0.0"
+version = "@toml.version@"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
 keywords = ["Communication/Email", "Cost/Paid", "Vendor/Microsoft", "Area/Communication", "Type/Connector"]
