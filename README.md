@@ -14,11 +14,11 @@ To use the Microsoft Outlook Mail connector, you need a Microsoft account and an
 
 ### Step 1: Sign in to Azure Portal
 
-If you don't have a Microsoft Azure account, you can create one for free at [https://azure.microsoft.com](https://azure.microsoft.com).
+1. If you don't have a Microsoft Azure account, you can create one for free at [https://azure.microsoft.com](https://azure.microsoft.com).
 
-Go to the [Azure Portal](https://portal.azure.com) and sign in with your Microsoft account. From the home page, navigate to **Entra**.
+2. Go to the [Azure Portal](https://portal.azure.com) and sign in with your Microsoft account. From the home page, navigate to **Entra**.
 
-![Azure Portal](https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/refs/heads/main/docs/resources/azure-portal.png)
+   ![Azure Portal](https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/refs/heads/main/docs/resources/azure-portal.png)
 
 ### Step 2: Register an application
 
@@ -32,6 +32,7 @@ Go to the [Azure Portal](https://portal.azure.com) and sign in with your Microso
    - **Name**: Provide a name for your app (e.g., `Ballerina Outlook Connector App`)
    - **Supported account types**: Select **Any Entra ID Tenant + Personal Microsoft Accounts**.
    - **Redirect URI**: Select **Web** and enter your redirect URI (e.g., `http://localhost` for local testing).
+   <br\>
 
    ![Register application](https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail/refs/heads/main/docs/resources/register-application.png)
 
