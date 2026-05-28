@@ -124,9 +124,9 @@ To use the `microsoft.outlook.mail` connector in your Ballerina application, upd
 
 Import the `microsoft.outlook.mail` module.
 
-```ballerina
-import ballerinax/microsoft.outlook.mail;
-```
+   ```ballerina
+   import ballerinax/microsoft.outlook.mail;
+   ```
 
 ### Step 2: Instantiate a new connector
 
