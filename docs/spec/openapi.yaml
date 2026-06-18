@@ -4,7 +4,8 @@ info:
   description: "Reduced Microsoft Graph v1.0 OpenAPI spec covering Outlook mail operations:\
     \ messages, mail folders, attachments, and related actions. This includes operations\
     \ for sending, reading, organizing, and managing email messages and mail folders\
-    \ for the signed-in user."
+    \ for the signed-in user (/me) as well as on behalf of any specific user (/users/{userIdentifier})\
+    \ using application permissions."
   version: v1.0
 servers:
 - url: https://graph.microsoft.com/v1.0
@@ -22,6 +23,10 @@ tags:
   description: User-level actions such as sending mail
 - name: users.user.Actions
   description: User-level actions performed on behalf of a specific user by id or userPrincipalName
+- name: users.message
+  description: Operations on messages in a specific user's mailbox
+- name: users.mailFolder
+  description: Operations on mail folders in a specific user's mailbox
 paths:
   /me/messages:
     description: Provides operations to manage the messages property of the microsoft.graph.user
@@ -674,6 +679,1133 @@ paths:
       schema:
         type: string
       x-ms-docs-key-type: user
+  /users/{userIdentifier}/messages:
+    description: Provides operations to manage the messages property of a specific user's mailbox.
+    get:
+      tags:
+      - users.message
+      summary: List messages from user
+      description: "Get the messages in a specific user's mailbox (including the Sent\
+        \ Items and Deleted Items folders). By default, this operation does not return\
+        \ hidden messages. Use the includeHiddenMessages query parameter to include\
+        \ them in the response."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-list-messages?view=graph-rest-1.0
+      operationId: listMessagesFromUser
+      parameters:
+      - name: includeHiddenMessages
+        in: query
+        description: Include Hidden Messages
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.messageCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - users.message
+      summary: Create message (draft) from user
+      description: "Create a draft of a new message in either JSON or MIME format\
+        \ on behalf of a specific user."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-post-messages?view=graph-rest-1.0
+      operationId: createDraftMessageFromUser
+      requestBody:
+        description: New message draft
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMessage"
+        required: true
+      responses:
+        "2XX":
+          description: Created message draft
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+  /users/{userIdentifier}/messages/{messageId}:
+    description: Provides operations to manage a specific message in a specific user's mailbox.
+    get:
+      tags:
+      - users.message
+      summary: Get message from user
+      description: "Get the properties and relationships of a message object from a\
+        \ specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-get?view=graph-rest-1.0
+      operationId: getMessageFromUser
+      parameters:
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - users.message
+      summary: Delete message from user
+      description: "Delete a message in a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-delete?view=graph-rest-1.0
+      operationId: deleteMessageFromUser
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    patch:
+      tags:
+      - users.message
+      summary: Update message from user
+      description: Update the properties of a message object in a specific user's mailbox.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-update?view=graph-rest-1.0
+      operationId: updateMessageFromUser
+      requestBody:
+        description: New property values
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMessage"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /users/{userIdentifier}/messages/{messageId}/send:
+    description: Provides operations to call the send method on a message in a specific user's mailbox.
+    post:
+      tags:
+      - users.message
+      summary: Send draft message from user
+      description: "Send an existing draft message from a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-send?view=graph-rest-1.0
+      operationId: sendDraftMessageFromUser
+      parameters:
+      - name: Content-Length
+        in: header
+        description: Must be 0 as this operation sends an empty body
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          default: 0
+        x-ballerina-name: contentLength
+      responses:
+        "202":
+          description: Accepted
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /users/{userIdentifier}/messages/{messageId}/copy:
+    description: Provides operations to call the copy method on a message in a specific user's mailbox.
+    post:
+      tags:
+      - users.message
+      summary: Copy message from user
+      description: Copy a message to a folder within a specific user's mailbox.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-copy?view=graph-rest-1.0
+      operationId: copyMessageFromUser
+      requestBody:
+        description: Action parameters
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageIdCopyBody"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMessage"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /users/{userIdentifier}/messages/{messageId}/forward:
+    description: Provides operations to call the forward method on a message in a specific user's mailbox.
+    post:
+      tags:
+      - users.message
+      summary: Forward message from user
+      description: "Forward a message from a specific user's mailbox using either JSON\
+        \ or MIME format."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-forward?view=graph-rest-1.0
+      operationId: forwardMessageFromUser
+      requestBody:
+        description: Action parameters
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageIdForwardBody"
+        required: true
+      responses:
+        "202":
+          description: Accepted
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /users/{userIdentifier}/messages/{messageId}/attachments:
+    description: Provides operations to manage attachments on a message in a specific user's mailbox.
+    get:
+      tags:
+      - users.message
+      summary: List attachments from user
+      description: Retrieve a list of attachment objects attached to a message in a specific user's mailbox.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-list-attachments?view=graph-rest-1.0
+      operationId: listAttachmentsFromUser
+      parameters:
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.attachmentCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - users.message
+      summary: Add file attachment from user
+      description: "Add a file attachment to a message in a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/message-post-attachments?view=graph-rest-1.0
+      operationId: addAttachmentFromUser
+      requestBody:
+        description: New attachment
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphAttachment"
+        required: true
+      responses:
+        "2XX":
+          description: Created attachment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphAttachment"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /users/{userIdentifier}/messages/{messageId}/attachments/{attachmentId}:
+    description: Provides operations to manage a specific attachment on a message in a specific user's mailbox.
+    get:
+      tags:
+      - users.message
+      summary: Get attachment from user
+      description: "Read the properties, relationships, or raw contents of an attachment\
+        \ on a message in a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/attachment-get?view=graph-rest-1.0
+      operationId: getAttachmentFromUser
+      parameters:
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved attachment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphAttachment"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - users.message
+      summary: Delete attachment from user
+      description: Delete an attachment from a message in a specific user's mailbox.
+      operationId: deleteAttachmentFromUser
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+    - name: attachmentId
+      in: path
+      description: The unique identifier of attachment
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: attachment
+  /users/{userIdentifier}/messages/{messageId}/attachments/createUploadSession:
+    description: Provides operations to call the createUploadSession method on a message in a specific user's mailbox.
+    post:
+      tags:
+      - users.message
+      summary: Create large file attachment upload session from user
+      description: "Create an upload session that allows an app to iteratively upload\
+        \ ranges of a file to attach to a message in a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/attachment-createuploadsession?view=graph-rest-1.0
+      operationId: createUploadSessionFromUser
+      requestBody:
+        description: Action parameters
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttachmentsCreateUploadSessionBody"
+        required: true
+      responses:
+        "2XX":
+          description: Success - returns an upload session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphUploadSessionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: messageId
+      in: path
+      description: The unique identifier of message
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: message
+  /users/{userIdentifier}/mailFolders:
+    description: Provides operations to manage the mailFolders property of a specific user's mailbox.
+    get:
+      tags:
+      - users.mailFolder
+      summary: List mailFolders from user
+      description: "Get the mail folder collection directly under the root folder of\
+        \ a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-list-mailfolders?view=graph-rest-1.0
+      operationId: listMailFoldersFromUser
+      parameters:
+      - name: includeHiddenFolders
+        in: query
+        description: Include Hidden Folders
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.mailFolderCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - users.mailFolder
+      summary: Create mailFolder from user
+      description: "Create a new mail folder in the root folder of a specific user's\
+        \ mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-post-mailfolders?view=graph-rest-1.0
+      operationId: createMailFolderFromUser
+      requestBody:
+        description: "New mail folder (use '@odata.type': '#microsoft.graph.mailSearchFolder'\
+          \ to create a search folder)"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Created mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+  /users/{userIdentifier}/mailFolders/{mailFolderId}:
+    description: Provides operations to manage a specific mail folder in a specific user's mailbox.
+    get:
+      tags:
+      - users.mailFolder
+      summary: Get mailFolder from user
+      description: "Retrieve the properties and relationships of a mail folder in a\
+        \ specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-get?view=graph-rest-1.0
+      operationId: getMailFolderFromUser
+      parameters:
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - users.mailFolder
+      summary: Delete mailFolder from user
+      description: "Delete a mail folder from a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-delete?view=graph-rest-1.0
+      operationId: deleteMailFolderFromUser
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    patch:
+      tags:
+      - users.mailFolder
+      summary: Update mailFolder from user
+      description: Update the writable properties of a mailFolder in a specific user's mailbox.
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-update?view=graph-rest-1.0
+      operationId: updateMailFolderFromUser
+      requestBody:
+        description: New property values
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: mailFolderId
+      in: path
+      description: The unique identifier of mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
+  /users/{userIdentifier}/mailFolders/{mailFolderId}/childFolders:
+    description: Provides operations to manage child folders in a mail folder in a specific user's mailbox.
+    get:
+      tags:
+      - users.mailFolder
+      summary: List childFolders from user
+      description: "Get the folder collection under the specified folder in a specific\
+        \ user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-list-childfolders?view=graph-rest-1.0
+      operationId: listChildFoldersFromUser
+      parameters:
+      - name: includeHiddenFolders
+        in: query
+        description: Include Hidden Folders
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - $ref: "#/components/parameters/top"
+      - $ref: "#/components/parameters/skip"
+      - $ref: "#/components/parameters/search"
+      - $ref: "#/components/parameters/filter"
+      - $ref: "#/components/parameters/count"
+      - name: $orderby
+        in: query
+        description: Order items by property values
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarOrderby
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          $ref: "#/components/responses/microsoft.graph.mailFolderCollectionResponse"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-pageable:
+        nextLinkName: '@odata.nextLink'
+        operationName: listMore
+      x-ms-docs-operation-type: operation
+    post:
+      tags:
+      - users.mailFolder
+      summary: Create child folder from user
+      description: "Create a new child mailFolder in a specific user's mailbox."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/mailfolder-post-childfolders?view=graph-rest-1.0
+      operationId: createChildFolderFromUser
+      requestBody:
+        description: New child mail folder
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Created child mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: mailFolderId
+      in: path
+      description: The unique identifier of mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
+  /users/{userIdentifier}/mailFolders/{mailFolderId}/childFolders/{mailFolderId1}:
+    description: Provides operations to manage a specific child folder in a mail folder in a specific user's mailbox.
+    get:
+      tags:
+      - users.mailFolder
+      summary: Get child folder from user
+      description: Retrieve the properties and relationships of a child mailFolder in a specific user's mailbox.
+      operationId: getChildFolderFromUser
+      parameters:
+      - name: includeHiddenFolders
+        in: query
+        description: Include Hidden Folders
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      - name: $select
+        in: query
+        description: Select properties to be returned
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarSelect
+      - name: $expand
+        in: query
+        description: Expand related entities
+        required: false
+        style: form
+        explode: false
+        schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        x-ballerina-name: dollarExpand
+      responses:
+        "2XX":
+          description: Retrieved child mail folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    delete:
+      tags:
+      - users.mailFolder
+      summary: Delete child folder from user
+      operationId: deleteChildFolderFromUser
+      parameters:
+      - name: If-Match
+        in: header
+        description: ETag
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+        x-ballerina-name: ifMatch
+      responses:
+        "204":
+          description: Success
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    patch:
+      tags:
+      - users.mailFolder
+      summary: Update child folder from user
+      operationId: updateChildFolderFromUser
+      requestBody:
+        description: New property values
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        required: true
+      responses:
+        "2XX":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MicrosoftGraphMailFolder"
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: operation
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
+    - name: mailFolderId
+      in: path
+      description: The unique identifier of mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
+    - name: mailFolderId1
+      in: path
+      description: The unique identifier of child mailFolder
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: mailFolder
   /me/mailFolders:
     description: Provides operations to manage the mailFolders property of the microsoft.graph.user
       entity.
