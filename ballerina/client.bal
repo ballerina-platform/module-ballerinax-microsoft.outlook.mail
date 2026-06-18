@@ -20,7 +20,7 @@
 import ballerina/data.jsondata;
 import ballerina/http;
 
-# Reduced Microsoft Graph v1.0 OpenAPI spec covering Outlook mail operations: messages, mail folders, attachments, and related actions. This includes operations for sending, reading, organizing, and managing email messages and mail folders for the signed-in user (/me) as well as on behalf of any specific user (/users/{userIdentifier}) using application permissions.
+# Reduced Microsoft Graph v1.0 OpenAPI spec covering Outlook mail operations: messages, mail folders, attachments, and related actions. This includes operations for the signed-in user (/me) using delegated permissions, and user-scoped operations (/users/{userIdentifier}) for application-permission scenarios.
 public isolated client class Client {
     final http:Client clientEp;
     # Gets invoked to initialize the `connector`.
