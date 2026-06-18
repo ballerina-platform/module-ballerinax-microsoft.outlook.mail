@@ -20,7 +20,7 @@
 import ballerina/data.jsondata;
 import ballerina/http;
 
-# Reduced Microsoft Graph v1.0 OpenAPI spec covering Outlook mail operations: messages, mail folders, attachments, and related actions. This includes operations for sending, reading, organizing, and managing email messages and mail folders for the signed-in user.
+# Reduced Microsoft Graph v1.0 OpenAPI spec covering Outlook mail operations: messages, mail folders, attachments, and related actions. This includes operations for sending, reading, organizing, and managing email messages and mail folders for the signed-in user (/me) as well as on behalf of any specific user (/users/{userIdentifier}) using application permissions.
 public isolated client class Client {
     final http:Client clientEp;
     # Gets invoked to initialize the `connector`.
@@ -228,6 +228,330 @@ public isolated client class Client {
         json jsonBody = jsondata:toJson(payload);
         request.setPayload(jsonBody, "application/json");
         return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # List messages from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved collection 
+    remote isolated function listMessagesFromUser(string userIdentifier, map<string|string[]> headers = {}, *ListMessagesFromUserQueries queries) returns MicrosoftGraphMessageCollectionResponse|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages`;
+        map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Create message (draft) from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + headers - Headers to be sent with the request 
+    # + payload - New message draft 
+    # + return - Created message draft 
+    remote isolated function createDraftMessageFromUser(string userIdentifier, MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # Get message from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved message 
+    remote isolated function getMessageFromUser(string userIdentifier, string messageId, map<string|string[]> headers = {}, *GetMessageFromUserQueries queries) returns MicrosoftGraphMessage|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}`;
+        map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Delete message from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + return - Success 
+    remote isolated function deleteMessageFromUser(string userIdentifier, string messageId, DeleteMessageFromUserHeaders headers = {}) returns error? {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}`;
+        map<string|string[]> httpHeaders = http:getHeaderMap(headers);
+        return self.clientEp->delete(resourcePath, headers = httpHeaders);
+    }
+
+    # Update message from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + payload - New property values 
+    # + return - Success 
+    remote isolated function updateMessageFromUser(string userIdentifier, string messageId, MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->patch(resourcePath, request, headers);
+    }
+
+    # Send draft message from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + return - Accepted 
+    remote isolated function sendDraftMessageFromUser(string userIdentifier, string messageId, SendDraftMessageFromUserHeaders headers = {}) returns error? {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/send`;
+        map<string|string[]> httpHeaders = http:getHeaderMap(headers);
+        http:Request request = new;
+        return self.clientEp->post(resourcePath, request, httpHeaders);
+    }
+
+    # Copy message from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + payload - Action parameters 
+    # + return - Success 
+    remote isolated function copyMessageFromUser(string userIdentifier, string messageId, MessageIdCopyBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/copy`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # Forward message from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + payload - Action parameters 
+    # + return - Accepted 
+    remote isolated function forwardMessageFromUser(string userIdentifier, string messageId, MessageIdForwardBody payload, map<string|string[]> headers = {}) returns error? {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/forward`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # List attachments from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved collection 
+    remote isolated function listAttachmentsFromUser(string userIdentifier, string messageId, map<string|string[]> headers = {}, *ListAttachmentsFromUserQueries queries) returns MicrosoftGraphAttachmentCollectionResponse|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/attachments`;
+        map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Add file attachment from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + payload - New attachment 
+    # + return - Created attachment 
+    remote isolated function addAttachmentFromUser(string userIdentifier, string messageId, MicrosoftGraphAttachment payload, map<string|string[]> headers = {}) returns MicrosoftGraphAttachment|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/attachments`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # Get attachment from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + attachmentId - The unique identifier of attachment
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved attachment 
+    remote isolated function getAttachmentFromUser(string userIdentifier, string messageId, string attachmentId, map<string|string[]> headers = {}, *GetAttachmentFromUserQueries queries) returns MicrosoftGraphAttachment|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/attachments/${getEncodedUri(attachmentId)}`;
+        map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Delete attachment from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + attachmentId - The unique identifier of attachment
+    # + headers - Headers to be sent with the request 
+    # + return - Success 
+    remote isolated function deleteAttachmentFromUser(string userIdentifier, string messageId, string attachmentId, DeleteAttachmentFromUserHeaders headers = {}) returns error? {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/attachments/${getEncodedUri(attachmentId)}`;
+        map<string|string[]> httpHeaders = http:getHeaderMap(headers);
+        return self.clientEp->delete(resourcePath, headers = httpHeaders);
+    }
+
+    # Create large file attachment upload session from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + messageId - The unique identifier of message
+    # + headers - Headers to be sent with the request 
+    # + payload - Action parameters 
+    # + return - Success - returns an upload session 
+    remote isolated function createUploadSessionFromUser(string userIdentifier, string messageId, AttachmentsCreateUploadSessionBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphUploadSessionResponse|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/attachments/createUploadSession`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # List mailFolders from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved collection 
+    remote isolated function listMailFoldersFromUser(string userIdentifier, map<string|string[]> headers = {}, *ListMailFoldersFromUserQueries queries) returns MicrosoftGraphMailFolderCollectionResponse|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders`;
+        map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Create mailFolder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + headers - Headers to be sent with the request 
+    # + payload - New mail folder (use '@odata.type': '#microsoft.graph.mailSearchFolder' to create a search folder) 
+    # + return - Created mail folder 
+    remote isolated function createMailFolderFromUser(string userIdentifier, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # Get mailFolder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved mail folder 
+    remote isolated function getMailFolderFromUser(string userIdentifier, string mailFolderId, map<string|string[]> headers = {}, *GetMailFolderFromUserQueries queries) returns MicrosoftGraphMailFolder|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}`;
+        map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Delete mailFolder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + headers - Headers to be sent with the request 
+    # + return - Success 
+    remote isolated function deleteMailFolderFromUser(string userIdentifier, string mailFolderId, DeleteMailFolderFromUserHeaders headers = {}) returns error? {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}`;
+        map<string|string[]> httpHeaders = http:getHeaderMap(headers);
+        return self.clientEp->delete(resourcePath, headers = httpHeaders);
+    }
+
+    # Update mailFolder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + headers - Headers to be sent with the request 
+    # + payload - New property values 
+    # + return - Success 
+    remote isolated function updateMailFolderFromUser(string userIdentifier, string mailFolderId, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->patch(resourcePath, request, headers);
+    }
+
+    # List childFolders from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved collection 
+    remote isolated function listChildFoldersFromUser(string userIdentifier, string mailFolderId, map<string|string[]> headers = {}, *ListChildFoldersFromUserQueries queries) returns MicrosoftGraphMailFolderCollectionResponse|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}/childFolders`;
+        map<Encoding> queryParamEncoding = {"$orderby": {style: FORM, explode: false}, "$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Create child folder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + headers - Headers to be sent with the request 
+    # + payload - New child mail folder 
+    # + return - Created child mail folder 
+    remote isolated function createChildFolderFromUser(string userIdentifier, string mailFolderId, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}/childFolders`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
+    # Get child folder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + mailFolderId1 - The unique identifier of child mailFolder
+    # + headers - Headers to be sent with the request 
+    # + queries - Queries to be sent with the request 
+    # + return - Retrieved child mail folder 
+    remote isolated function getChildFolderFromUser(string userIdentifier, string mailFolderId, string mailFolderId1, map<string|string[]> headers = {}, *GetChildFolderFromUserQueries queries) returns MicrosoftGraphMailFolder|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
+        map<Encoding> queryParamEncoding = {"$select": {style: FORM, explode: false}, "$expand": {style: FORM, explode: false}};
+        resourcePath = resourcePath + check getPathForQueryParam(queries, queryParamEncoding);
+        return self.clientEp->get(resourcePath, headers);
+    }
+
+    # Delete child folder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + mailFolderId1 - The unique identifier of child mailFolder
+    # + headers - Headers to be sent with the request 
+    # + return - Success 
+    remote isolated function deleteChildFolderFromUser(string userIdentifier, string mailFolderId, string mailFolderId1, DeleteChildFolderFromUserHeaders headers = {}) returns error? {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
+        map<string|string[]> httpHeaders = http:getHeaderMap(headers);
+        return self.clientEp->delete(resourcePath, headers = httpHeaders);
+    }
+
+    # Update child folder from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + mailFolderId - The unique identifier of mailFolder
+    # + mailFolderId1 - The unique identifier of child mailFolder
+    # + headers - Headers to be sent with the request 
+    # + payload - New property values 
+    # + return - Success 
+    remote isolated function updateChildFolderFromUser(string userIdentifier, string mailFolderId, string mailFolderId1, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->patch(resourcePath, request, headers);
     }
 
     # List mailFolders
