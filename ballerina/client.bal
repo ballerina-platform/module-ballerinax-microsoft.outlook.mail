@@ -216,6 +216,20 @@ public isolated client class Client {
         return self.clientEp->post(resourcePath, request, headers);
     }
 
+    # Send mail from user
+    #
+    # + userIdentifier - The unique identifier or userPrincipalName of the user
+    # + headers - Headers to be sent with the request 
+    # + payload - Action parameters 
+    # + return - Accepted 
+    remote isolated function sendMailFromUser(string userIdentifier, record {MicrosoftGraphMessage Message?; boolean? SaveToSentItems = true;} payload, map<string|string[]> headers = {}) returns error? {
+        string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/sendMail`;
+        http:Request request = new;
+        json jsonBody = jsondata:toJson(payload);
+        request.setPayload(jsonBody, "application/json");
+        return self.clientEp->post(resourcePath, request, headers);
+    }
+
     # List mailFolders
     #
     # + headers - Headers to be sent with the request 
