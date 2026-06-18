@@ -27,36 +27,6 @@ public type OAuth2ClientCredentialsGrantConfig record {|
     string tokenUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 |};
 
-# Represents the Queries record for the operation: listMailFolders
-public type ListMailFoldersQueries record {
-    # Skip the first n items
-    @http:Query {name: "$skip"}
-    int dollarSkip?;
-    # Show only the first n items
-    @http:Query {name: "$top"}
-    int dollarTop?;
-    # Filter items by property values
-    @http:Query {name: "$filter"}
-    string dollarFilter?;
-    # Search items by search phrases
-    @http:Query {name: "$search"}
-    string dollarSearch?;
-    # Order items by property values
-    @http:Query {name: "$orderby"}
-    string[] dollarOrderby?;
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Include Hidden Folders
-    boolean includeHiddenFolders?;
-    # Include count of items
-    @http:Query {name: "$count"}
-    boolean dollarCount?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
-};
-
 public type MicrosoftGraphMessageResponse MicrosoftGraphMessage|CompletedResponse?;
 
 # Represents the Queries record for the operation: listAttachments
@@ -87,18 +57,11 @@ public type ListAttachmentsQueries record {
     string[] dollarSelect?;
 };
 
-public type AttachmentsCreateUploadSessionBody record {
-    @jsondata:Name {value: "AttachmentItem"}
-    MicrosoftGraphAttachmentItem attachmentItem?;
-};
-
-# Represents the Queries record for the operation: listMessages
-public type ListMessagesQueries record {
+# Represents the Queries record for the operation: listMailFoldersFromUser
+public type ListMailFoldersFromUserQueries record {
     # Skip the first n items
     @http:Query {name: "$skip"}
     int dollarSkip?;
-    # Include Hidden Messages
-    boolean includeHiddenMessages?;
     # Show only the first n items
     @http:Query {name: "$top"}
     int dollarTop?;
@@ -114,6 +77,8 @@ public type ListMessagesQueries record {
     # Expand related entities
     @http:Query {name: "$expand"}
     string[] dollarExpand?;
+    # Include Hidden Folders
+    boolean includeHiddenFolders?;
     # Include count of items
     @http:Query {name: "$count"}
     boolean dollarCount?;
@@ -123,23 +88,6 @@ public type ListMessagesQueries record {
 };
 
 public type MicrosoftGraphFollowupFlagStatus "notFlagged"|"complete"|"flagged";
-
-public type MicrosoftGraphEntity record {
-    @jsondata:Name {value: "@odata.type"}
-    string atOdataType?;
-    # The unique identifier for an entity. Read-only
-    string id?;
-};
-
-# Represents the Queries record for the operation: getMessage
-public type GetMessageQueries record {
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
-};
 
 public type MicrosoftGraphMessage record {
     *MicrosoftGraphOutlookItem;
@@ -203,34 +151,38 @@ public type MicrosoftGraphMessage record {
     MicrosoftGraphRecipient[] replyTo?;
 };
 
+# Represents the Queries record for the operation: listAttachmentsFromUser
+public type ListAttachmentsFromUserQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
 public type MicrosoftGraphMessageCollectionResponse record {
     *BaseCollectionPaginationCountResponse;
     MicrosoftGraphMessage[] value?;
 };
-
-public type MicrosoftGraphMailFolder record {
-    *MicrosoftGraphEntity;
-    # The number of immediate child mailFolders in the current mailFolder
-    decimal? childFolderCount?;
-    # The unique identifier for the mailFolder's parent mailFolder
-    string? parentFolderId?;
-    # The mailFolder's display name
-    string? displayName?;
-    @jsondata:Name {value: "@odata.type"}
-    string atOdataType?;
-    # The collection of child folders in the mailFolder
-    MicrosoftGraphMailFolder[] childFolders?;
-    # The collection of messages in the mailFolder
-    MicrosoftGraphMessage[] messages?;
-    # The number of items in the mailFolder marked as unread
-    decimal? unreadItemCount?;
-    # Indicates whether the mailFolder is hidden. This property can be set only when creating the folder
-    boolean? isHidden?;
-    # The number of items in the mailFolder
-    decimal? totalItemCount?;
-};
-
-public type MicrosoftGraphAttachmentType "file"|"item"|"reference";
 
 # Represents the Headers record for the operation: sendDraftMessage
 public type SendDraftMessageHeaders record {
@@ -244,47 +196,18 @@ public type MicrosoftGraphMailFolderCollectionResponse record {
     MicrosoftGraphMailFolder[] value?;
 };
 
-# Represents the Headers record for the operation: deleteChildFolder
-public type DeleteChildFolderHeaders record {
-    # ETag
-    @http:Header {name: "If-Match"}
-    string ifMatch?;
+# Represents the Queries record for the operation: getAttachmentFromUser
+public type GetAttachmentFromUserQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
 };
 
 # Represents the Headers record for the operation: deleteMessage
 public type DeleteMessageHeaders record {
-    # ETag
-    @http:Header {name: "If-Match"}
-    string ifMatch?;
-};
-
-public type MicrosoftGraphUploadSessionResponse MicrosoftGraphUploadSession|UploadSessionCompletedResponse?;
-
-# OAuth2 Refresh Token Grant Configs
-public type OAuth2RefreshTokenGrantConfig record {|
-    *http:OAuth2RefreshTokenGrantConfig;
-    # Refresh URL
-    string refreshUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
-|};
-
-# Represents the Headers record for the operation: deleteAttachment
-public type DeleteAttachmentHeaders record {
-    # ETag
-    @http:Header {name: "If-Match"}
-    string ifMatch?;
-};
-
-public type MicrosoftGraphInternetMessageHeader record {
-    @jsondata:Name {value: "@odata.type"}
-    string atOdataType?;
-    # Represents the key in a key-value pair
-    string? name?;
-    # The value in a key-value pair
-    string? value?;
-};
-
-# Represents the Headers record for the operation: deleteMailFolder
-public type DeleteMailFolderHeaders record {
     # ETag
     @http:Header {name: "If-Match"}
     string ifMatch?;
@@ -348,6 +271,324 @@ public type MicrosoftGraphOutlookItem record {
     string[] categories?;
 };
 
+public type MicrosoftGraphRecipient record {
+    # The recipient's email address
+    MicrosoftGraphEmailAddress|record {} emailAddress?;
+    @jsondata:Name {value: "@odata.type"}
+    string atOdataType?;
+};
+
+public type MicrosoftGraphItemBody record {
+    @jsondata:Name {value: "@odata.type"}
+    string atOdataType?;
+    # The type of the content. Possible values are text and html
+    MicrosoftGraphBodyType|record {} contentType?;
+    # The content of the item
+    string? content?;
+};
+
+public type BaseCollectionPaginationCountResponse record {
+    @jsondata:Name {value: "@odata.nextLink"}
+    string? atOdataNextLink?;
+    @jsondata:Name {value: "@odata.count"}
+    int? atOdataCount?;
+};
+
+# Represents the Queries record for the operation: listChildFoldersFromUser
+public type ListChildFoldersFromUserQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include Hidden Folders
+    boolean includeHiddenFolders?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
+# Represents the Queries record for the operation: listMessagesFromUser
+public type ListMessagesFromUserQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Include Hidden Messages
+    boolean includeHiddenMessages?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
+# Represents the Headers record for the operation: sendDraftMessageFromUser
+public type SendDraftMessageFromUserHeaders record {
+    # Must be 0 as this operation sends an empty body
+    @http:Header {name: "Content-Length"}
+    int contentLength = 0;
+};
+
+# Represents the Headers record for the operation: deleteChildFolderFromUser
+public type DeleteChildFolderFromUserHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
+};
+
+public type MicrosoftGraphInferenceClassificationType "focused"|"other";
+
+public type MicrosoftGraphBodyType "text"|"html";
+
+# Represents the Queries record for the operation: getMailFolder
+public type GetMailFolderQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
+public type MicrosoftGraphFollowupFlag record {
+    # The date and time that the follow-up is to begin
+    MicrosoftGraphDateTimeTimeZone|record {} startDateTime?;
+    # The date and time that the follow-up is to be finished. Note: To set the due date, you must also specify the startDateTime; otherwise, you get a 400 Bad Request response
+    MicrosoftGraphDateTimeTimeZone|record {} dueDateTime?;
+    # The status for follow-up for an item. Possible values are notFlagged, complete, and flagged
+    MicrosoftGraphFollowupFlagStatus|record {} flagStatus?;
+    @jsondata:Name {value: "@odata.type"}
+    string atOdataType?;
+    # The date and time that the follow-up was finished
+    MicrosoftGraphDateTimeTimeZone|record {} completedDateTime?;
+};
+
+# Represents the Headers record for the operation: deleteMailFolderFromUser
+public type DeleteMailFolderFromUserHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
+};
+
+public type MessageIdForwardBody record {
+    # A comment to include when forwarding the message. Can be an empty string
+    @jsondata:Name {value: "Comment"}
+    string? comment?;
+    # A writeable message object to add content or modify recipients when forwarding the message
+    @jsondata:Name {value: "Message"}
+    MicrosoftGraphMessage|record {} message?;
+    # The list of recipients of the forwarded message
+    @jsondata:Name {value: "ToRecipients"}
+    MicrosoftGraphRecipient[] toRecipients?;
+};
+
+public type MessageIdCopyBody record {
+    # The destination folder ID or well-known folder name
+    @jsondata:Name {value: "DestinationId"}
+    string destinationId?;
+};
+
+# Represents the Queries record for the operation: listMailFolders
+public type ListMailFoldersQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include Hidden Folders
+    boolean includeHiddenFolders?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
+public type AttachmentsCreateUploadSessionBody record {
+    @jsondata:Name {value: "AttachmentItem"}
+    MicrosoftGraphAttachmentItem attachmentItem?;
+};
+
+# Represents the Queries record for the operation: getMessageFromUser
+public type GetMessageFromUserQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
+# Represents the Queries record for the operation: listMessages
+public type ListMessagesQueries record {
+    # Skip the first n items
+    @http:Query {name: "$skip"}
+    int dollarSkip?;
+    # Include Hidden Messages
+    boolean includeHiddenMessages?;
+    # Show only the first n items
+    @http:Query {name: "$top"}
+    int dollarTop?;
+    # Filter items by property values
+    @http:Query {name: "$filter"}
+    string dollarFilter?;
+    # Search items by search phrases
+    @http:Query {name: "$search"}
+    string dollarSearch?;
+    # Order items by property values
+    @http:Query {name: "$orderby"}
+    string[] dollarOrderby?;
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include count of items
+    @http:Query {name: "$count"}
+    boolean dollarCount?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
+public type MicrosoftGraphEntity record {
+    @jsondata:Name {value: "@odata.type"}
+    string atOdataType?;
+    # The unique identifier for an entity. Read-only
+    string id?;
+};
+
+# Represents the Queries record for the operation: getMessage
+public type GetMessageQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
+public type MicrosoftGraphMailFolder record {
+    *MicrosoftGraphEntity;
+    # The number of immediate child mailFolders in the current mailFolder
+    decimal? childFolderCount?;
+    # The unique identifier for the mailFolder's parent mailFolder
+    string? parentFolderId?;
+    # The mailFolder's display name
+    string? displayName?;
+    @jsondata:Name {value: "@odata.type"}
+    string atOdataType?;
+    # The collection of child folders in the mailFolder
+    MicrosoftGraphMailFolder[] childFolders?;
+    # The collection of messages in the mailFolder
+    MicrosoftGraphMessage[] messages?;
+    # The number of items in the mailFolder marked as unread
+    decimal? unreadItemCount?;
+    # Indicates whether the mailFolder is hidden. This property can be set only when creating the folder
+    boolean? isHidden?;
+    # The number of items in the mailFolder
+    decimal? totalItemCount?;
+};
+
+public type MicrosoftGraphAttachmentType "file"|"item"|"reference";
+
+# Represents the Headers record for the operation: deleteAttachmentFromUser
+public type DeleteAttachmentFromUserHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
+};
+
+# Represents the Headers record for the operation: deleteChildFolder
+public type DeleteChildFolderHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
+};
+
+public type MicrosoftGraphUploadSessionResponse MicrosoftGraphUploadSession|UploadSessionCompletedResponse?;
+
+# OAuth2 Refresh Token Grant Configs
+public type OAuth2RefreshTokenGrantConfig record {|
+    *http:OAuth2RefreshTokenGrantConfig;
+    # Refresh URL
+    string refreshUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+|};
+
+# Represents the Headers record for the operation: deleteAttachment
+public type DeleteAttachmentHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
+};
+
+public type MicrosoftGraphInternetMessageHeader record {
+    @jsondata:Name {value: "@odata.type"}
+    string atOdataType?;
+    # Represents the key in a key-value pair
+    string? name?;
+    # The value in a key-value pair
+    string? value?;
+};
+
+# Represents the Headers record for the operation: deleteMessageFromUser
+public type DeleteMessageFromUserHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
+};
+
+# Represents the Headers record for the operation: deleteMailFolder
+public type DeleteMailFolderHeaders record {
+    # ETag
+    @http:Header {name: "If-Match"}
+    string ifMatch?;
+};
+
 public type MicrosoftGraphEmailAddress record {
     # The email address of the person or entity
     string? address?;
@@ -369,13 +610,6 @@ public type MicrosoftGraphDateTimeTimeZone record {
     string? timeZone?;
 };
 
-public type MicrosoftGraphRecipient record {
-    # The recipient's email address
-    MicrosoftGraphEmailAddress|record {} emailAddress?;
-    @jsondata:Name {value: "@odata.type"}
-    string atOdataType?;
-};
-
 public type MicrosoftGraphAttachmentCollectionResponse record {
     *BaseCollectionPaginationCountResponse;
     MicrosoftGraphAttachment[] value?;
@@ -391,20 +625,14 @@ public type GetAttachmentQueries record {
     string[] dollarSelect?;
 };
 
-public type MicrosoftGraphItemBody record {
-    @jsondata:Name {value: "@odata.type"}
-    string atOdataType?;
-    # The type of the content. Possible values are text and html
-    MicrosoftGraphBodyType|record {} contentType?;
-    # The content of the item
-    string? content?;
-};
-
-public type BaseCollectionPaginationCountResponse record {
-    @jsondata:Name {value: "@odata.nextLink"}
-    string? atOdataNextLink?;
-    @jsondata:Name {value: "@odata.count"}
-    int? atOdataCount?;
+# Represents the Queries record for the operation: getMailFolderFromUser
+public type GetMailFolderFromUserQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
 };
 
 public type MicrosoftGraphExtension record {
@@ -442,6 +670,18 @@ public type MicrosoftGraphAttachmentItem record {
     string? contentType?;
 };
 
+# Represents the Queries record for the operation: getChildFolderFromUser
+public type GetChildFolderFromUserQueries record {
+    # Expand related entities
+    @http:Query {name: "$expand"}
+    string[] dollarExpand?;
+    # Include Hidden Folders
+    boolean includeHiddenFolders?;
+    # Select properties to be returned
+    @http:Query {name: "$select"}
+    string[] dollarSelect?;
+};
+
 public type MicrosoftGraphAttachment record {
     *MicrosoftGraphEntity;
     # The Timestamp type represents date and time information using ISO 8601 format and is always in UTC time. For example, midnight UTC on Jan 1, 2014 is 2014-01-01T00:00:00Z
@@ -458,10 +698,6 @@ public type MicrosoftGraphAttachment record {
     string? contentType?;
 };
 
-public type MicrosoftGraphInferenceClassificationType "focused"|"other";
-
-public type MicrosoftGraphBodyType "text"|"html";
-
 public type MicrosoftGraphUploadSession record {
     # The date and time in UTC that the upload session expires. The complete file must be uploaded before this expiration time is reached. Each fragment uploaded during the session extends the expiration time
     string? expirationDateTime?;
@@ -476,48 +712,7 @@ public type MicrosoftGraphUploadSession record {
 public type UploadSessionCompletedResponse record {
 };
 
-# Represents the Queries record for the operation: getMailFolder
-public type GetMailFolderQueries record {
-    # Expand related entities
-    @http:Query {name: "$expand"}
-    string[] dollarExpand?;
-    # Select properties to be returned
-    @http:Query {name: "$select"}
-    string[] dollarSelect?;
-};
-
-public type MicrosoftGraphFollowupFlag record {
-    # The date and time that the follow-up is to begin
-    MicrosoftGraphDateTimeTimeZone|record {} startDateTime?;
-    # The date and time that the follow-up is to be finished. Note: To set the due date, you must also specify the startDateTime; otherwise, you get a 400 Bad Request response
-    MicrosoftGraphDateTimeTimeZone|record {} dueDateTime?;
-    # The status for follow-up for an item. Possible values are notFlagged, complete, and flagged
-    MicrosoftGraphFollowupFlagStatus|record {} flagStatus?;
-    @jsondata:Name {value: "@odata.type"}
-    string atOdataType?;
-    # The date and time that the follow-up was finished
-    MicrosoftGraphDateTimeTimeZone|record {} completedDateTime?;
-};
-
-public type MessageIdForwardBody record {
-    # A comment to include when forwarding the message. Can be an empty string
-    @jsondata:Name {value: "Comment"}
-    string? comment?;
-    # A writeable message object to add content or modify recipients when forwarding the message
-    @jsondata:Name {value: "Message"}
-    MicrosoftGraphMessage|record {} message?;
-    # The list of recipients of the forwarded message
-    @jsondata:Name {value: "ToRecipients"}
-    MicrosoftGraphRecipient[] toRecipients?;
-};
-
 public type MicrosoftGraphImportance "low"|"normal"|"high";
-
-public type MessageIdCopyBody record {
-    # The destination folder ID or well-known folder name
-    @jsondata:Name {value: "DestinationId"}
-    string destinationId?;
-};
 
 # Represents the Queries record for the operation: listChildFolders
 public type ListChildFoldersQueries record {
