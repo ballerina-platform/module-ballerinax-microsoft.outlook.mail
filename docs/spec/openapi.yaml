@@ -20,6 +20,8 @@ tags:
   description: Operations on mail folders in the signed-in user's mailbox
 - name: me.user.Actions
   description: User-level actions such as sending mail
+- name: users.user.Actions
+  description: User-level actions performed on behalf of a specific user by id or userPrincipalName
 paths:
   /me/messages:
     description: Provides operations to manage the messages property of the microsoft.graph.user
@@ -637,6 +639,41 @@ paths:
         "5XX":
           $ref: "#/components/responses/error"
       x-ms-docs-operation-type: action
+  /users/{userIdentifier}/sendMail:
+    description: Provides operations to call the sendMail method on behalf of a specific user.
+    post:
+      tags:
+      - users.user.Actions
+      summary: Send mail from user
+      description: "Send the message specified in the request body on behalf of the\
+        \ specified user using either JSON or MIME format. When using JSON format,\
+        \ you can include a file attachment in the same sendMail action call. This\
+        \ method saves the message in the Sent Items folder. Requires application\
+        \ permissions or delegated permissions with appropriate access."
+      externalDocs:
+        description: Find more info here
+        url: https://learn.microsoft.com/graph/api/user-sendmail?view=graph-rest-1.0
+      operationId: sendMailFromUser
+      requestBody:
+        $ref: "#/components/requestBodies/sendMailRequestBody"
+      responses:
+        "202":
+          description: Accepted
+        "4XX":
+          $ref: "#/components/responses/error"
+        "5XX":
+          $ref: "#/components/responses/error"
+      x-ms-docs-operation-type: action
+    parameters:
+    - name: userIdentifier
+      in: path
+      description: The unique identifier or userPrincipalName of the user
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+      x-ms-docs-key-type: user
   /me/mailFolders:
     description: Provides operations to manage the mailFolders property of the microsoft.graph.user
       entity.
