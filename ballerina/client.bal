@@ -75,7 +75,7 @@ public isolated client class Client {
     #
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the message is deleted and no content is returned. Unless, the message may not exist or the caller may lack the required permission. 
     remote isolated function deleteMessage(string messageId, DeleteMessageHeaders headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -87,7 +87,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
-    # + return - Success 
+    # + return - If successful, returns the updated message object. Unless, the message may not exist or the request body may be invalid. 
     remote isolated function updateMessage(string messageId, MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}`;
         http:Request request = new;
@@ -100,7 +100,7 @@ public isolated client class Client {
     #
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the draft is sent and stored in Sent Items, and no content is returned. Unless, the draft may be missing required fields or the message may not exist. 
     remote isolated function sendDraftMessage(string messageId, SendDraftMessageHeaders headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/send`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -113,7 +113,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
-    # + return - Success 
+    # + return - If successful, returns the copied message in the destination folder. Unless, the destination folder may not exist or the message may not be found. 
     remote isolated function copyMessage(string messageId, MessageIdCopyBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessageResponse|error {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/copy`;
         http:Request request = new;
@@ -127,7 +127,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
-    # + return - Success 
+    # + return - If successful, the message is forwarded and no content is returned. Unless, the recipients may be invalid or the message may not exist. 
     remote isolated function forwardMessage(string messageId, MessageIdForwardBody payload, map<string|string[]> headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/forward`;
         http:Request request = new;
@@ -182,7 +182,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + attachmentId - The unique identifier of attachment
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the attachment is deleted and no content is returned. Unless, the attachment may not exist or the caller may lack the required permission. 
     remote isolated function deleteAttachment(string messageId, string attachmentId, DeleteAttachmentHeaders headers = {}) returns error? {
         string resourcePath = string `/me/messages/${getEncodedUri(messageId)}/attachments/${getEncodedUri(attachmentId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -207,7 +207,7 @@ public isolated client class Client {
     #
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
-    # + return - Success 
+    # + return - If successful, the message is sent and stored in Sent Items, and no content is returned. Unless, the request body may be invalid or the recipients may be unresolvable. 
     remote isolated function sendMail(record {MicrosoftGraphMessage Message?; boolean? SaveToSentItems = true;} payload, map<string|string[]> headers = {}) returns error? {
         string resourcePath = string `/me/sendMail`;
         http:Request request = new;
@@ -276,7 +276,7 @@ public isolated client class Client {
     # + userIdentifier - The unique identifier or userPrincipalName of the user
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the message is deleted from the specified user's mailbox and no content is returned. Unless, the message may not exist or access may be denied. 
     remote isolated function deleteMessageFromUser(string userIdentifier, string messageId, DeleteMessageFromUserHeaders headers = {}) returns error? {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -289,7 +289,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
-    # + return - Success 
+    # + return - If successful, returns the updated message object in the specified user's mailbox. Unless, the message may not exist or the request body may be invalid. 
     remote isolated function updateMessageFromUser(string userIdentifier, string messageId, MicrosoftGraphMessage payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}`;
         http:Request request = new;
@@ -317,8 +317,8 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + headers - Headers to be sent with the request 
     # + payload - Action parameters 
-    # + return - Success 
-    remote isolated function copyMessageFromUser(string userIdentifier, string messageId, MessageIdCopyBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessage|error {
+    # + return - If successful, returns the copied message in the destination folder of the specified user's mailbox. Unless, the destination folder may not exist or the message may not be found. 
+    remote isolated function copyMessageFromUser(string userIdentifier, string messageId, MessageIdCopyBody payload, map<string|string[]> headers = {}) returns MicrosoftGraphMessageResponse|error {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/copy`;
         http:Request request = new;
         json jsonBody = jsondata:toJson(payload);
@@ -391,7 +391,7 @@ public isolated client class Client {
     # + messageId - The unique identifier of message
     # + attachmentId - The unique identifier of attachment
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the attachment is deleted from the specified user's message and no content is returned. Unless, the attachment may not exist or access may be denied. 
     remote isolated function deleteAttachmentFromUser(string userIdentifier, string messageId, string attachmentId, DeleteAttachmentFromUserHeaders headers = {}) returns error? {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/messages/${getEncodedUri(messageId)}/attachments/${getEncodedUri(attachmentId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -459,7 +459,7 @@ public isolated client class Client {
     # + userIdentifier - The unique identifier or userPrincipalName of the user
     # + mailFolderId - The unique identifier of mailFolder
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the mail folder is deleted from the specified user's mailbox and no content is returned. Unless, the folder may not exist or access may be denied. 
     remote isolated function deleteMailFolderFromUser(string userIdentifier, string mailFolderId, DeleteMailFolderFromUserHeaders headers = {}) returns error? {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -472,7 +472,7 @@ public isolated client class Client {
     # + mailFolderId - The unique identifier of mailFolder
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
-    # + return - Success 
+    # + return - If successful, returns the updated mail folder object in the specified user's mailbox. Unless, the folder may not exist or the request body may be invalid. 
     remote isolated function updateMailFolderFromUser(string userIdentifier, string mailFolderId, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}`;
         http:Request request = new;
@@ -531,7 +531,7 @@ public isolated client class Client {
     # + mailFolderId - The unique identifier of mailFolder
     # + mailFolderId1 - The unique identifier of child mailFolder
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the child folder is deleted from the specified user's mailbox and no content is returned. Unless, the folder may not exist or access may be denied. 
     remote isolated function deleteChildFolderFromUser(string userIdentifier, string mailFolderId, string mailFolderId1, DeleteChildFolderFromUserHeaders headers = {}) returns error? {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -545,7 +545,7 @@ public isolated client class Client {
     # + mailFolderId1 - The unique identifier of child mailFolder
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
-    # + return - Success 
+    # + return - If successful, returns the updated child folder object in the specified user's mailbox. Unless, the folder may not exist or the request body may be invalid. 
     remote isolated function updateChildFolderFromUser(string userIdentifier, string mailFolderId, string mailFolderId1, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/users/${getEncodedUri(userIdentifier)}/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
         http:Request request = new;
@@ -596,7 +596,7 @@ public isolated client class Client {
     #
     # + mailFolderId - The unique identifier of mailFolder
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the mail folder is deleted and no content is returned. Unless, the folder may not exist or the caller may lack the required permission. 
     remote isolated function deleteMailFolder(string mailFolderId, DeleteMailFolderHeaders headers = {}) returns error? {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -608,7 +608,7 @@ public isolated client class Client {
     # + mailFolderId - The unique identifier of mailFolder
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
-    # + return - Success 
+    # + return - If successful, returns the updated mail folder object. Unless, the folder may not exist or the request body may be invalid. 
     remote isolated function updateMailFolder(string mailFolderId, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}`;
         http:Request request = new;
@@ -663,7 +663,7 @@ public isolated client class Client {
     # + mailFolderId - The unique identifier of mailFolder
     # + mailFolderId1 - The unique identifier of child mailFolder
     # + headers - Headers to be sent with the request 
-    # + return - Success 
+    # + return - If successful, the child folder is deleted and no content is returned. Unless, the folder may not exist or the caller may lack the required permission. 
     remote isolated function deleteChildFolder(string mailFolderId, string mailFolderId1, DeleteChildFolderHeaders headers = {}) returns error? {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
         map<string|string[]> httpHeaders = http:getHeaderMap(headers);
@@ -676,7 +676,7 @@ public isolated client class Client {
     # + mailFolderId1 - The unique identifier of child mailFolder
     # + headers - Headers to be sent with the request 
     # + payload - New property values 
-    # + return - Success 
+    # + return - If successful, returns the updated child folder object. Unless, the folder may not exist or the request body may be invalid. 
     remote isolated function updateChildFolder(string mailFolderId, string mailFolderId1, MicrosoftGraphMailFolder payload, map<string|string[]> headers = {}) returns MicrosoftGraphMailFolder|error {
         string resourcePath = string `/me/mailFolders/${getEncodedUri(mailFolderId)}/childFolders/${getEncodedUri(mailFolderId1)}`;
         http:Request request = new;

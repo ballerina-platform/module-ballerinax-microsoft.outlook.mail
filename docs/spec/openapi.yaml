@@ -206,7 +206,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the message is deleted and no content is returned. Unless, the message may not exist or the caller may lack the required permission.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -231,7 +231,7 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the updated message object. Unless, the message may not exist or the request body may be invalid.
           content:
             application/json:
               schema:
@@ -279,7 +279,7 @@ paths:
         x-ballerina-name: contentLength
       responses:
         "204":
-          description: Success
+          description: If successful, the draft is sent and stored in Sent Items, and no content is returned. Unless, the draft may be missing required fields or the message may not exist.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -315,7 +315,7 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the copied message in the destination folder. Unless, the destination folder may not exist or the message may not be found.
           content:
             application/json:
               schema:
@@ -357,7 +357,7 @@ paths:
         required: true
       responses:
         "204":
-          description: Success
+          description: If successful, the message is forwarded and no content is returned. Unless, the recipients may be invalid or the message may not exist.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -549,7 +549,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the attachment is deleted and no content is returned. Unless, the attachment may not exist or the caller may lack the required permission.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -637,7 +637,7 @@ paths:
         $ref: "#/components/requestBodies/sendMailRequestBody"
       responses:
         "204":
-          description: Success
+          description: If successful, the message is sent and stored in Sent Items, and no content is returned. Unless, the request body may be invalid or the recipients may be unresolvable.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -862,7 +862,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the message is deleted from the specified user's mailbox and no content is returned. Unless, the message may not exist or access may be denied.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -886,7 +886,7 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the updated message object in the specified user's mailbox. Unless, the message may not exist or the request body may be invalid.
           content:
             application/json:
               schema:
@@ -984,11 +984,11 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the copied message in the destination folder of the specified user's mailbox. Unless, the destination folder may not exist or the message may not be found.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MicrosoftGraphMessage"
+                $ref: "#/components/schemas/MicrosoftGraphMessageResponse"
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -1237,7 +1237,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the attachment is deleted from the specified user's message and no content is returned. Unless, the attachment may not exist or access may be denied.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -1504,7 +1504,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the mail folder is deleted from the specified user's mailbox and no content is returned. Unless, the folder may not exist or access may be denied.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -1528,7 +1528,7 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the updated mail folder object in the specified user's mailbox. Unless, the folder may not exist or the request body may be invalid.
           content:
             application/json:
               schema:
@@ -1747,7 +1747,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the child folder is deleted from the specified user's mailbox and no content is returned. Unless, the folder may not exist or access may be denied.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -1767,7 +1767,7 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the updated child folder object in the specified user's mailbox. Unless, the folder may not exist or the request body may be invalid.
           content:
             application/json:
               schema:
@@ -1989,7 +1989,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the mail folder is deleted and no content is returned. Unless, the folder may not exist or the caller may lack the required permission.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -2013,7 +2013,7 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the updated mail folder object. Unless, the folder may not exist or the request body may be invalid.
           content:
             application/json:
               schema:
@@ -2223,7 +2223,7 @@ paths:
         x-ballerina-name: ifMatch
       responses:
         "204":
-          description: Success
+          description: If successful, the child folder is deleted and no content is returned. Unless, the folder may not exist or the caller may lack the required permission.
         "4XX":
           $ref: "#/components/responses/error"
         "5XX":
@@ -2243,7 +2243,7 @@ paths:
         required: true
       responses:
         "2XX":
-          description: Success
+          description: If successful, returns the updated child folder object. Unless, the folder may not exist or the request body may be invalid.
           content:
             application/json:
               schema:
