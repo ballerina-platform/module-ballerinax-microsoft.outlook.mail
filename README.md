@@ -77,7 +77,7 @@ To use the Microsoft Outlook Mail connector, you need a Microsoft account and an
 
 > **Note:** Once you have the credentials, use the **client credentials grant type** when calling the `sendMailFromUser` API, and the **refresh token grant type** (authorization code flow) for all other APIs.
 >
-> To use the client credentials grant type, configure your application with `clientId`, `clientSecret`, `tokenUrl`, and `scope`. Refer to [this guide](https://github.com/ballerina-platform/module-ballerinax-microsoft.sharepoint.pages#step-2-register-an-application-and-generate-credentials) for more information.
+> To use the client credentials grant type, configure your application with `clientId`, `clientSecret`, `tokenUrl`, and `scope`. Refer to [this guide](https://github.com/ballerina-platform/module-ballerinax-microsoft.sharepoint.pages#step-2-register-an-application-and-generate-credentials) for more information. For `sendMailFromUser`, you must configure **Application** permissions (e.g., `Mail.Send`) in Azure AD and grant admin consent as delegated permissions are not sufficient.
 
 ### Step 5: Set up the authentication flow
 
