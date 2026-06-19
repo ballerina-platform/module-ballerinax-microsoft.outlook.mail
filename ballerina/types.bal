@@ -696,6 +696,8 @@ public type MicrosoftGraphAttachment record {
     boolean isInline?;
     # The MIME type
     string? contentType?;
+    # The base64-encoded contents of the file attachment. Required only for file attachments
+    string? contentBytes?;
 };
 
 public type MicrosoftGraphUploadSession record {

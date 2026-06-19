@@ -2856,6 +2856,11 @@ components:
             type: string
             description: The MIME type
             nullable: true
+          contentBytes:
+            type: string
+            description: The base64-encoded contents of the file attachment. Required only for file attachments
+            nullable: true
+            format: base64url
         discriminator:
           propertyName: '@odata.type'
           mapping:
