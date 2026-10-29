@@ -2,10 +2,10 @@
 distribution = "2201.12.0"
 org = "ballerinax"
 name = "microsoft.outlook.mail"
-version = "3.1.0"
+version = "3.1.1"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Communication/Email", "Cost/Paid", "Vendor/Microsoft", "Area/Communication", "Type/Connector"]
+keywords = ["Communication/Email", "Vendor/Microsoft", "Area/Communication", "Type/Connector"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail"
 icon = "icon.png"
 
