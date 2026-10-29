@@ -57,9 +57,16 @@ allprojects {
 
 def moduleVersion = project.version.replace("-SNAPSHOT", "")
 
-task build {
-    dependsOn(':microsoft.outlook.mail-ballerina:build')
-    dependsOn(':microsoft.outlook.mail-examples:build')
+if (tasks.names.contains('build')) {
+    tasks.named('build') {
+        dependsOn(':microsoft.outlook.mail-ballerina:build')
+        dependsOn(':microsoft.outlook.mail-examples:build')
+    }
+} else {
+    tasks.register('build') {
+        dependsOn(':microsoft.outlook.mail-ballerina:build')
+        dependsOn(':microsoft.outlook.mail-examples:build')
+    }
 }
 
 release {
