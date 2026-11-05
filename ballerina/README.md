@@ -2,7 +2,14 @@
 
 [Microsoft Outlook Mail](https://outlook.live.com/owa/) is a widely used email service from Microsoft, available as part of the Microsoft 365 suite.
 
-The `ballerinax/microsoft.outlook.mail` connector offers APIs to connect and interact with the [Microsoft Outlook Mail API](https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview?view=graph-rest-1.0) endpoints, specifically based on the [Microsoft Graph REST API v1.0](https://learn.microsoft.com/en-us/graph/overview). It supports sending, receiving, and managing email messages, creating and organizing mail folders, managing file and item attachments, drafting and deleting messages, and reading or updating message properties such as subject, body, flags, and categories.
+The Microsoft Outlook Mail connector provides APIs to connect and interact with the [Microsoft Outlook Mail API](https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview?view=graph-rest-1.0) endpoints, specifically based on the [Microsoft Graph REST API v1.0](https://learn.microsoft.com/en-us/graph/overview).
+
+## Key Features
+
+- Send mail directly, or create, update, and send drafts on behalf of the signed-in user or any mailbox in the tenant
+- Read, search, and filter messages across mailboxes, and update properties such as subject, body, importance, flags, and read state
+- Organize mail into folders and nested child folders, and copy, forward, or delete messages between them
+- Manage file and item attachments on messages, including large-file uploads through upload sessions
 
 ## Setup guide
 

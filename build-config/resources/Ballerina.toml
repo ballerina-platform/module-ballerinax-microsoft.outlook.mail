@@ -5,7 +5,7 @@ name = "microsoft.outlook.mail"
 version = "@toml.version@"
 license = ["Apache-2.0"]
 authors = ["Ballerina"]
-keywords = ["Communication/Email", "Cost/Paid", "Vendor/Microsoft", "Area/Communication", "Type/Connector"]
+keywords = ["Communication/Email", "Vendor/Microsoft", "Area/Communication", "Type/Connector"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-microsoft.outlook.mail"
 icon = "icon.png"
 
